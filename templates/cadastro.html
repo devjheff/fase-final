@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+  <a href="{{ url_for('index') }}" class="logo">
+    <img src="{{ url_for('static', filename='imgs/logobranca.png') }}" alt="Logo">
+  </a>
+
+  <div class="container">
+    <h2>Cadastro</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('cadastro') }}">
+      <div class="input-group">
+        <label>Nome</label>
+        <input type="text" name="nome" placeholder="Digite seu nome" required>
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Digite Seu Email" required>
+      </div>
+
+      <div class="input-group">
+        <label for="telefone">Telefone:</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
+      </div>
+
+      <div class="input-group">
+        <label>Data De Nascimento</label>
+        <input type="date" name="data_nascimento" required>
+      </div>
+
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" name="senha" placeholder="Digite sua senha" required minlength="6">
+      </div>
+
+      <div class="input-group">
+        <label>Confirmar Senha</label>
+        <input type="password" name="confirmar_senha" placeholder="Digite a senha novamente" required minlength="6">
+      </div>
+
+      <button type="submit">Cadastrar</button>
+
+      <p class="switch">
+        Já tem conta? <a href="{{ url_for('login') }}">Login</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+    // Máscara para telefone (mantendo seu estilo)
+    document.querySelector('input[name="telefone"]').addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.substring(0, 11);
+      
+      if (value.length > 10) {
+        value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+      } else if (value.length > 6) {
+        value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+      } else if (value.length > 2) {
+        value = value.replace(/^(\d{2})(\d+)$/, '($1) $2');
+      } else if (value.length > 0) {
+        value = value.replace(/^(\d*)$/, '($1');
+      }
+      
+      e.target.value = value;
+    });
+  </script>
+
+</body>
+</html>

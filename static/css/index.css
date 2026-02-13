@@ -1,0 +1,835 @@
+
+
+
+.linkmenuprincipal{
+  text-decoration: none;
+}
+
+
+/* =========================
+   RESET E CONFIGURAÇÕES GERAIS
+   ========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   BODY / FUNDO DO SITE
+   ========================= */
+   /* Esconde a barra de rolagem completamente */
+/* =========================
+   LOGO - CORRIGIDA PARA NAO FICAR GRUDADA
+   ========================= */
+.logo {
+  position: absolute !important;  /* MUDA DE FIXED PARA ABSOLUTE */
+  top: 50px !important;
+  left: 50px !important;
+  z-index: 9999 !important;
+}
+
+.logo img {
+  width: 100px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* =========================
+   HTML E BODY - CORRIGIDOS
+   ========================= */
+html {
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;  /* Remove scroll do html */
+  height: 100% !important;
+  position: relative !important;  /* IMPORTANTE: Para o absolute funcionar */
+}
+
+body {
+  overflow-y: auto !important;    /* Scroll SÓ no body */
+  overflow-x: hidden !important;
+  height: 100vh !important;
+  position: relative !important;  /* IMPORTANTE: Para o absolute funcionar */
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Esconder scrollbar (funciona) */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+body {
+
+  background: linear-gradient(
+    270deg,
+    rgba(59, 61, 147, 1),
+    rgba(1, 2, 42, 1),
+    rgba(1, 5, 76, 1)
+  );
+
+  background-size: 600% 600%;
+  animation: gradientMove 10s ease infinite;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+
+
+
+/* =========================
+   RESOLVER CONTAINER AREA 
+   ========================= */
+
+/* =========================
+   CONTAINERAREA - MESMO ESTILO DO CONTAINER2 (PARA TÍTULOS)
+   ========================= */
+.containerarea {
+    width: 100%;
+    max-width: 1200px;
+    margin: 90px auto 20px auto;
+    padding: 0 40px;
+    text-align: left;
+}
+
+.containerarea h2 {
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 15px;
+    border-bottom: 3px solid #4e54c8;
+    display: inline-block;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* =========================
+   CONTAINER2 - CARDS DOS CURSOS (NÃO MEXER)
+   ========================= */
+.container2 {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-left: 5px solid #4e54c8;
+    backdrop-filter: blur(10px);
+}
+
+.container2 h2 {
+    font-size: 2.5rem;
+    color: #1a1a2c;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border-bottom: 3px solid #4e54c8;
+    padding-bottom: 15px;
+    display: inline-block;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .containerarea {
+        padding: 0 25px;
+        margin-top: 70px;
+    }
+    
+    .containerarea h2 {
+        font-size: 2rem;
+    }
+    
+    .container2 {
+        padding: 30px;
+        margin: 20px 25px;
+    }
+    
+    .container2 h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .containerarea {
+        padding: 0 20px;
+        margin-top: 60px;
+    }
+    
+    .containerarea h2 {
+        font-size: 1.8rem;
+    }
+    
+    .container2 {
+        padding: 25px;
+        margin: 15px 20px;
+    }
+    
+    .container2 h2 {
+        font-size: 1.8rem;
+    }
+}
+/* =========================
+   CONTAINER PRINCIPAL
+   ========================= */
+
+.container {
+
+  width: 100%;
+  max-width: 1200px;
+  padding: 40px;
+  border-radius: 5px;
+  margin-top: 90px;
+
+}
+
+/* =========================
+   CABEÇALHO
+   ========================= */
+.header {
+  text-align: center;
+  margin-bottom: 45px;
+}
+
+.header h2 {
+  font-size: 2.4rem;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 1.05rem;
+  color: #666;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* =========================
+   GRID DE CARDS
+   ========================= */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+/* =========================
+   CARD
+   ========================= */
+.card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 5px;
+  border-top: 5px solid #4e54c8;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
+}
+
+.card-icon {
+  font-size: 2.6rem;
+  color: #4e54c8;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.card h3 {
+  font-size: 1.45rem;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.card p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  flex-grow: 1;
+}
+
+/* =========================
+   BOTÕES
+   ========================= */
+.btn-link {
+  text-decoration: none;
+}
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.25);
+}
+
+.btn i {
+  transition: transform 0.3s;
+}
+
+.btn:hover i {
+  transform: translateX(6px);
+}
+
+.btnn {
+  width: 100%;
+  max-width: 250px;        /* opcional, pra não ocupar tudo */
+  padding: 15px;
+  margin-left: auto;      /* 👉 empurra o botão pra direita */
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.btnn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+}
+
+.btnn i {
+  transition: transform 0.3s;
+}
+
+.btnn:hover i {
+  transform: translateX(6px);
+}
+
+
+
+/* =========================
+   ESTATÍSTICAS
+   ========================= */
+.stats-container {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 30px;
+  border-radius: 5px;
+  background: rgba(78,84,200,0.12);
+}
+
+.stat {
+  text-align: center;
+  min-width: 150px;
+}
+
+.stat i {
+  font-size: 2.4rem;
+  color: #4e54c8;
+  margin-bottom: 10px;
+}
+
+.stat h4 {
+  font-size: 2rem;
+  color: #222;
+}
+
+.stat p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+.footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #fff;
+}
+
+.footer-links {
+  margin-top: 15px;
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.footer-links a:hover {
+  color: #8f94fb;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   RESPONSIVO
+   ========================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 25px;
+  }
+
+  .header h2 {
+    font-size: 2rem;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .stats-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+/* Perfil no canto superior direito */
+.user-profile {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    padding: 8px 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.profile-container:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #4a6bff, #6a11cb);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+}
+
+.profile-name {
+    font-weight: 600;
+    color: white;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-status {
+    font-size: 12px;
+    color: #a0d2ff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.login-btn {
+    background: linear-gradient(135deg, #4a6bff, #6a11cb);
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
+}
+
+/* Responsividade do perfil */
+@media (max-width: 768px) {
+    .user-profile {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .profile-container {
+        padding: 6px 12px;
+    }
+    
+    .profile-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+    
+    .profile-name {
+        font-size: 13px;
+    }
+    
+    .profile-info {
+        min-width: 100px;
+    }
+    
+    .login-btn, .logout-btn {
+        padding: 6px 15px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-name {
+        display: none;
+    }
+    
+    .profile-status {
+        display: none;
+    }
+    
+    .profile-info {
+        min-width: auto;
+    }
+} 
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* =========================
+   CARROSSEL
+   ========================= */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  grid-column: 1 / -1; /* Ocupa todas as colunas do grid */
+  margin-bottom: 30px;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  display: flex;
+  align-items: flex-end;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+
+.slide-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  color: white;
+  padding: 40px;
+  transform: translateY(20px);
+  transition: transform 0.5s ease;
+}
+
+.carousel-slide.active .slide-caption {
+  transform: translateY(0);
+}
+
+.slide-caption h3 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.slide-caption p {
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.9);
+}
+
+/* Botões de navegação */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+  left: 20px;
+}
+
+.next-btn {
+  right: 20px;
+}
+
+/* Indicadores */
+.carousel-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.indicator:hover {
+  background: rgba(255,255,255,0.8);
+  transform: scale(1.2);
+}
+
+.indicator.active {
+  background: #4e54c8;
+  border-color: white;
+  transform: scale(1.2);
+}
+
+/* Controles de autoplay */
+.carousel-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 25px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+.control-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.control-btn:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.control-label {
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* =========================
+   RESPONSIVIDADE DO CARROSSEL
+   ========================= */
+@media (max-width: 768px) {
+  .carousel-container {
+    height: 400px;
+  }
+  
+  .slide-caption {
+    padding: 25px;
+  }
+  
+  .slide-caption h3 {
+    font-size: 1.8rem;
+  }
+  
+  .slide-caption p {
+    font-size: 1rem;
+  }
+  
+  .carousel-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .carousel-controls {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-container {
+    height: 300px;
+  }
+  
+  .slide-caption {
+    padding: 15px;
+  }
+  
+  .slide-caption h3 {
+    font-size: 1.4rem;
+  }
+  
+  .carousel-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+  
+  .prev-btn {
+    left: 10px;
+  }
+  
+  .next-btn {
+    right: 10px;
+  }
+  
+  .carousel-indicators {
+    bottom: 10px;
+  }
+  
+  .indicator {
+    width: 10px;
+    height: 10px;
+  }
+}

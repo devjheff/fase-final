@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+
+  <a href="{{ url_for('index') }}" class="logo">
+    <img src="{{ url_for('static', filename='imgs/logobranca.png') }}" alt="Logo">
+  </a>
+
+  <div class="container">
+    <h2>Login</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Digite seu email" required>
+      </div>
+
+      <div class="input-group">
+        <label>Senha</label>
+        <input type="password" name="senha" placeholder="Digite sua senha" required>
+      </div>
+
+      <button type="submit">Entrar</button>
+      
+
+      
+      <p class="switch">
+        Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastrar</a>
+      </p>
+    </form>
+  </div>
+
+</body>
+</html>

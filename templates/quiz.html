@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Questionário</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS do projeto -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/questionario.css') }}">
+</head>
+
+<body>
+
+  <!-- Perfil no canto superior direito -->
+<div class="user-profile">
+  <div class="profile-container" id="loggedInState">
+    <div class="profile-icon">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name">{{ session.usuario_nome }}</div>
+    </div>
+    <!-- MUDEI: href para /logout (não para /) -->
+    <a href="{{ url_for('logout') }}" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Sair
+    </a>
+  </div>
+</div>
+
+  <!-- Logo -->
+  <a href="/" class="logo">
+    <img src="{{ url_for('static', filename='imgs/Senac_logo.png') }}" alt="Logo">
+  </a>
+
+  <!-- Conteúdo Principal -->
+  <div class="container questionario-container">
+
+    <!-- Cabeçalho do Questionário -->
+    <div class="questionario-header">
+      <h1><i class="fas fa-clipboard-list"></i> Questionário de Conhecimentos</h1>
+      <p class="subtitle">Teste seus conhecimentos em diferentes áreas</p>
+      
+      <!-- Progresso -->
+      <div class="progress-container">
+        <div class="progress-info">
+          <span class="progress-text">Progresso: <strong id="progressPercent">0%</strong></span>
+          <span class="progress-counter" id="progressCounter">Pergunta 0 de 10</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Área da Pergunta -->
+    <div class="question-card" id="questionCard">
+      <div class="question-number">
+        <i class="fas fa-question-circle"></i>
+        Pergunta <span id="currentQuestionNumber">1</span>
+      </div>
+      
+      <div class="question-text" id="questionText">
+        <!-- A pergunta será inserida pelo JavaScript -->
+      </div>
+      
+      <!-- Opções de Resposta -->
+      <div class="options-container" id="optionsContainer">
+        <!-- As opções serão inseridas pelo JavaScript -->
+      </div>
+      
+      <!-- Feedback -->
+      <div class="feedback" id="feedback" style="display: none;">
+        <i class="fas fa-info-circle"></i>
+        <span id="feedbackText"></span>
+      </div>
+    </div>
+
+    <!-- Botões de Navegação -->
+    <div class="navigation-buttons">
+      <button id="prevBtn" class="nav-btn btn-secondary" disabled>
+        <i class="fas fa-arrow-left"></i> Anterior
+      </button>
+      
+      <button id="nextBtn" class="nav-btn btn-primary" disabled>
+        Próxima <i class="fas fa-arrow-right"></i>
+      </button>
+      
+      <button id="submitBtn" class="nav-btn btn-success" style="display: none;">
+        <i class="fas fa-paper-plane"></i> Enviar Questionário
+      </button>
+    </div>
+
+    <!-- Resultado Final (inicialmente oculto) -->
+    <div class="result-container" id="resultContainer" style="display: none;">
+      <div class="result-card">
+        <div class="result-header">
+          <i class="fas fa-trophy"></i>
+          <h2>Questionário Concluído!</h2>
+        </div>
+        
+        <div class="result-content">
+          <div class="score-circle">
+            <div class="score-value" id="finalScore">0%</div>
+            <div class="score-label">Pontuação</div>
+          </div>
+          
+          <div class="result-details">
+            <div class="result-stat">
+              <i class="fas fa-check-circle"></i>
+              <span>Respostas Corretas: <strong id="correctAnswers">0</strong></span>
+            </div>
+            <div class="result-stat">
+              <i class="fas fa-times-circle"></i>
+              <span>Respostas Incorretas: <strong id="incorrectAnswers">0</strong></span>
+            </div>
+            <div class="result-stat">
+              <i class="fas fa-clock"></i>
+              <span>Tempo: <strong id="timeSpent">0 min</strong></span>
+            </div>
+          </div>
+          
+          <div class="result-message" id="resultMessage">
+            <!-- Mensagem personalizada será inserida aqui -->
+          </div>
+        </div>
+        
+        <div class="result-actions">
+          <button id="restartBtn" class="btnn btn-primary">
+            <i class="fas fa-redo"></i> Refazer Questionário
+          </button>
+          <a href="/" class="btnn btn-secondary">
+            <i class="fas fa-home"></i> Voltar ao Início
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão voltar para o menu principal -->
+    <div class="back-container">
+      <a href="/" class="btnn linkmenuprincipal">
+        <i class="fas fa-arrow-left"></i> Voltar para a tela inicial
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p class="footer-text">
+        <center>
+          <img src="{{ url_for('static', filename='imgs/logobranca.png') }}" alt="Logo SQW" class="footer-logo">
+        </center>
+        <br>
+        © 2026 Turma 2025.2.235 Programação Web - SENAC • Todos os direitos reservados
+      </p>
+    </div>
+  </footer>
+
+  <!-- JavaScript do Questionário -->
+  <script>
+    // Banco de Dados de Perguntas (fictício para testes)
+    const questions = [
+      {
+        id: 1,
+        question: "Qual é a capital do Brasil?",
+        options: [
+          { id: 1, text: "São Paulo", correct: false },
+          { id: 2, text: "Rio de Janeiro", correct: false },
+          { id: 3, text: "Brasília", correct: true }
+        ],
+        explanation: "Brasília foi planejada e construída para ser a capital do Brasil, inaugurada em 1960."
+      },
+      {
+        id: 2,
+        question: "Qual linguagem é usada para estilizar páginas web?",
+        options: [
+          { id: 1, text: "HTML", correct: false },
+          { id: 2, text: "JavaScript", correct: false },
+          { id: 3, text: "CSS", correct: true }
+        ],
+        explanation: "CSS (Cascading Style Sheets) é a linguagem usada para estilizar páginas HTML."
+      },
+      {
+        id: 3,
+        question: "Quantos planetas existem no nosso sistema solar?",
+        options: [
+          { id: 1, text: "7", correct: false },
+          { id: 2, text: "8", correct: true },
+          { id: 3, text: "9", correct: false }
+        ],
+        explanation: "São 8 planetas: Mercúrio, Vênus, Terra, Marte, Júpiter, Saturno, Urano e Netuno."
+      },
+      {
+        id: 4,
+        question: "Qual é o maior oceano da Terra?",
+        options: [
+          { id: 1, text: "Atlântico", correct: false },
+          { id: 2, text: "Índico", correct: false },
+          { id: 3, text: "Pacífico", correct: true }
+        ],
+        explanation: "O Oceano Pacífico é o maior oceano, cobrindo cerca de 46% da superfície aquática da Terra."
+      },
+      {
+        id: 5,
+        question: "Em que ano o homem pisou na Lua pela primeira vez?",
+        options: [
+          { id: 1, text: "1965", correct: false },
+          { id: 2, text: "1969", correct: true },
+          { id: 3, text: "1972", correct: false }
+        ],
+        explanation: "Neil Armstrong pisou na Lua em 20 de julho de 1969, na missão Apollo 11."
+      },
+      {
+        id: 6,
+        question: "Qual é o elemento químico mais abundante no universo?",
+        options: [
+          { id: 1, text: "Oxigênio", correct: false },
+          { id: 2, text: "Hidrogênio", correct: true },
+          { id: 3, text: "Hélio", correct: false }
+        ],
+        explanation: "O hidrogênio constitui aproximadamente 75% da massa elementar do universo."
+      },
+      {
+        id: 7,
+        question: "Qual destes é um framework JavaScript?",
+        options: [
+          { id: 1, text: "Django", correct: false },
+          { id: 2, text: "Laravel", correct: false },
+          { id: 3, text: "React", correct: true }
+        ],
+        explanation: "React é uma biblioteca JavaScript para construção de interfaces de usuário, mantida pelo Facebook."
+      },
+      {
+        id: 8,
+        question: "Quem escreveu 'Dom Casmurro'?",
+        options: [
+          { id: 1, text: "Machado de Assis", correct: true },
+          { id: 2, text: "Carlos Drummond", correct: false },
+          { id: 3, text: "Clarice Lispector", correct: false }
+        ],
+        explanation: "Machado de Assis é o autor de 'Dom Casmurro', publicado em 1899."
+      },
+      {
+        id: 9,
+        question: "Qual é a unidade básica de vida?",
+        options: [
+          { id: 1, text: "Órgão", correct: false },
+          { id: 2, text: "Tecido", correct: false },
+          { id: 3, text: "Célula", correct: true }
+        ],
+        explanation: "A célula é considerada a menor unidade estrutural e funcional dos seres vivos."
+      },
+      {
+        id: 10,
+        question: "Quantos bits formam um byte?",
+        options: [
+          { id: 1, text: "8", correct: true },
+          { id: 2, text: "16", correct: false },
+          { id: 3, text: "32", correct: false }
+        ],
+        explanation: "Um byte é composto por 8 bits, sendo esta a unidade básica de informação em computação."
+      }
+    ];
+
+    // Variáveis do estado do questionário
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let score = 0;
+    let startTime = new Date();
+    let selectedOption = null;
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      loadQuestion(currentQuestionIndex);
+      updateProgress();
+      startTimer();
+    });
+
+    // Carregar pergunta
+    function loadQuestion(index) {
+      const question = questions[index];
+      const questionCard = document.getElementById('questionCard');
+      
+      // Remover animação anterior
+      questionCard.classList.remove('fade-in');
+      
+      // Atualizar número da pergunta
+      document.getElementById('currentQuestionNumber').textContent = index + 1;
+      
+      // Atualizar texto da pergunta
+      document.getElementById('questionText').textContent = question.question;
+      
+      // Limpar opções anteriores
+      const optionsContainer = document.getElementById('optionsContainer');
+      optionsContainer.innerHTML = '';
+      
+      // Adicionar novas opções
+      question.options.forEach(option => {
+        const optionElement = document.createElement('button');
+        optionElement.className = 'option-btn';
+        optionElement.innerHTML = `
+          <span class="option-letter">${String.fromCharCode(64 + option.id)}</span>
+          <span class="option-text">${option.text}</span>
+        `;
+        optionElement.dataset.optionId = option.id;
+        optionElement.dataset.correct = option.correct;
+        
+        // Verificar se já foi respondida
+        const userAnswer = userAnswers[index];
+        if (userAnswer && userAnswer.optionId === option.id) {
+          optionElement.classList.add('selected');
+          if (userAnswer.isCorrect) {
+            optionElement.classList.add('correct');
+          } else {
+            optionElement.classList.add('incorrect');
+          }
+        }
+        
+        optionElement.addEventListener('click', () => selectOption(optionElement, option));
+        optionsContainer.appendChild(optionElement);
+      });
+      
+      // Atualizar botões de navegação
+      updateNavigationButtons();
+      
+      // Esconder feedback
+      document.getElementById('feedback').style.display = 'none';
+      
+      // Adicionar animação
+      setTimeout(() => {
+        questionCard.classList.add('fade-in');
+      }, 10);
+    }
+
+    // Selecionar opção
+    function selectOption(optionElement, option) {
+      if (userAnswers[currentQuestionIndex]) return; // Não permite mudar resposta
+      
+      // Remover seleção anterior
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // Marcar como selecionada
+      optionElement.classList.add('selected');
+      selectedOption = option;
+      
+      // Registrar resposta
+      userAnswers[currentQuestionIndex] = {
+        questionId: questions[currentQuestionIndex].id,
+        optionId: option.id,
+        isCorrect: option.correct
+      };
+      
+      // Mostrar feedback
+      const feedback = document.getElementById('feedback');
+      const feedbackText = document.getElementById('feedbackText');
+      
+      if (option.correct) {
+        feedback.className = 'feedback correct';
+        feedbackText.textContent = "Resposta correta! " + questions[currentQuestionIndex].explanation;
+      } else {
+        feedback.className = 'feedback incorrect';
+        // Encontrar a resposta correta
+        const correctOption = questions[currentQuestionIndex].options.find(opt => opt.correct);
+        feedbackText.textContent = `Resposta incorreta. A resposta correta é: ${correctOption.text}. ${questions[currentQuestionIndex].explanation}`;
+      }
+      
+      feedback.style.display = 'flex';
+      
+      // Atualizar botões
+      updateNavigationButtons();
+    }
+
+    // Atualizar botões de navegação
+    function updateNavigationButtons() {
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      // Botão Anterior
+      prevBtn.disabled = currentQuestionIndex === 0;
+      
+      // Botão Próxima/Enviar
+      const hasAnswered = userAnswers[currentQuestionIndex] !== undefined;
+      
+      if (currentQuestionIndex === questions.length - 1 && hasAnswered) {
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'flex';
+        submitBtn.disabled = false;
+      } else {
+        nextBtn.style.display = 'flex';
+        submitBtn.style.display = 'none';
+        nextBtn.disabled = !hasAnswered;
+      }
+    }
+
+    // Atualizar progresso
+    function updateProgress() {
+      const progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+      const progressCounter = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
+      
+      document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
+      document.getElementById('progressCounter').textContent = progressCounter;
+      document.getElementById('progressFill').style.width = `${progressPercent}%`;
+    }
+
+    // Navegar para próxima pergunta
+    document.getElementById('nextBtn').addEventListener('click', function() {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion(currentQuestionIndex);
+        updateProgress();
+      }
+    });
+
+    // Navegar para pergunta anterior
+    document.getElementById('prevBtn').addEventListener('click', function() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion(currentQuestionIndex);
+        updateProgress();
+      }
+    });
+
+    // Enviar questionário
+    document.getElementById('submitBtn').addEventListener('click', showResults);
+
+    // Mostrar resultados
+    function showResults() {
+      // Calcular pontuação
+      score = userAnswers.filter(answer => answer && answer.isCorrect).length;
+      const totalQuestions = questions.length;
+      const percentage = (score / totalQuestions) * 100;
+      
+      // Calcular tempo
+      const endTime = new Date();
+      const timeDiff = endTime - startTime;
+      const minutes = Math.floor(timeDiff / 60000);
+      const seconds = Math.floor((timeDiff % 60000) / 1000);
+      
+      // Atualizar resultados
+      document.getElementById('finalScore').textContent = `${percentage.toFixed(0)}%`;
+      document.getElementById('correctAnswers').textContent = score;
+      document.getElementById('incorrectAnswers').textContent = totalQuestions - score;
+      document.getElementById('timeSpent').textContent = `${minutes}m ${seconds}s`;
+      
+      // Mensagem personalizada
+      const resultMessage = document.getElementById('resultMessage');
+      if (percentage >= 80) {
+        resultMessage.innerHTML = `
+          <i class="fas fa-star"></i>
+          <h3>Excelente!</h3>
+          <p>Você demonstrou um conhecimento excepcional. Continue assim!</p>
+        `;
+        resultMessage.className = 'result-message excellent';
+      } else if (percentage >= 60) {
+        resultMessage.innerHTML = `
+          <i class="fas fa-thumbs-up"></i>
+          <h3>Bom trabalho!</h3>
+          <p>Você tem um bom conhecimento, mas ainda pode melhorar em algumas áreas.</p>
+        `;
+        resultMessage.className = 'result-message good';
+      } else if (percentage >= 40) {
+        resultMessage.innerHTML = `
+          <i class="fas fa-book"></i>
+          <h3>Continue estudando!</h3>
+          <p>Você acertou algumas questões, mas precisa revisar o conteúdo.</p>
+        `;
+        resultMessage.className = 'result-message average';
+      } else {
+        resultMessage.innerHTML = `
+          <i class="fas fa-redo"></i>
+          <h3>Precisa melhorar</h3>
+          <p>É recomendável estudar mais o conteúdo antes de tentar novamente.</p>
+        `;
+        resultMessage.className = 'result-message poor';
+      }
+      
+      // Mostrar resultados e esconder questionário
+      document.getElementById('questionCard').style.display = 'none';
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('prevBtn').style.display = 'none';
+      document.getElementById('submitBtn').style.display = 'none';
+      document.getElementById('resultContainer').style.display = 'block';
+    }
+
+    // Reiniciar questionário
+    document.getElementById('restartBtn').addEventListener('click', function() {
+      // Resetar variáveis
+      currentQuestionIndex = 0;
+      userAnswers = [];
+      score = 0;
+      startTime = new Date();
+      selectedOption = null;
+      
+      // Mostrar questionário e esconder resultados
+      document.getElementById('questionCard').style.display = 'block';
+      document.getElementById('resultContainer').style.display = 'none';
+      document.getElementById('nextBtn').style.display = 'flex';
+      document.getElementById('prevBtn').style.display = 'flex';
+      
+      // Recarregar primeira pergunta
+      loadQuestion(currentQuestionIndex);
+      updateProgress();
+    });
+
+    // Timer (apenas para exibição)
+    function startTimer() {
+      setInterval(() => {
+        // Timer pode ser implementado para exibição se necessário
+      }, 1000);
+    }
+  </script>
+
+</body>
+</html>

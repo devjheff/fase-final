@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuários Cadastrados</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS do projeto -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+  <style>
+    /* ESTILOS PRINCIPAIS */
+    body {
+      background: #0a0c1c;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 100px auto 50px;
+      padding: 0 20px;
+    }
+    
+    .header {
+      margin-bottom: 30px;
+    }
+    
+    .header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+    }
+    
+    /* TABELA SIMPLES - APENAS 6 COLUNAS */
+    .users-table-container {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .users-table th {
+      background: rgba(78, 84, 200, 0.3);
+      color: #8f94fb;
+      padding: 15px 10px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    
+    .users-table td {
+      padding: 15px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.9);
+      font-size: 0.9rem;
+    }
+    
+    .user-row:hover {
+      background: rgba(143, 148, 251, 0.1);
+    }
+    
+    /* BOTÕES - APENAS EDITAR E EXCLUIR */
+    .btnn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    
+    .edit-btn {
+      background: rgba(52, 152, 219, 0.2);
+      color: #3498db;
+      border: 1px solid #3498db;
+    }
+    
+    .edit-btn:hover {
+      background: #3498db;
+      color: white;
+    }
+    
+    .delete-btn {
+      background: rgba(231, 76, 60, 0.2);
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    
+    .delete-btn:hover {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    /* HASH DA SENHA - RESUMIDO */
+    .senha-hash {
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      background: rgba(0,0,0,0.2);
+      padding: 4px 8px;
+      border-radius: 4px;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+    }
+    
+    /* TELEFONE - SEM QUEBRA */
+    .telefone-cell {
+      white-space: nowrap;
+    }
+    
+    /* ID BADGE */
+    .id-badge {
+      background: rgba(143,148,251,0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    
+    /* BUSCA E FILTRO */
+    .controls-container {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 20px;
+      padding-left: 45px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: #8f94fb;
+    }
+    
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.5);
+    }
+    
+    .filter-select {
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .filter-select option {
+      background: #1a1c2c;
+    }
+    
+    /* INFO DE RESULTADOS */
+    .results-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      color: rgba(255,255,255,0.7);
+    }
+    
+    .results-count {
+      color: #8f94fb;
+      font-weight: 600;
+    }
+    
+    /* PAGINAÇÃO */
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+      padding: 20px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+    }
+    
+    .page-numbers {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    
+    .page-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .page-btn:hover,
+    .page-btn.active {
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: white;
+      border-color: transparent;
+    }
+    
+    .pagination-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .pagination-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: white;
+    }
+    
+    .pagination-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    
+    /* MODAIS */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    
+    .modal-box {
+      background: #1a1c2c;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      margin: 0;
+      color: #8f94fb;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .modal-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    .form-group-modal {
+      margin-bottom: 15px;
+    }
+    
+    .form-group-modal label {
+      display: block;
+      margin-bottom: 5px;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+    }
+    
+    .form-control-modal {
+      width: 100%;
+      padding: 10px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: white;
+    }
+    
+    .form-control-modal:focus {
+      outline: none;
+      border-color: #8f94fb;
+    }
+    
+    .btn-modal {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .btn-modal-primary {
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: white;
+    }
+    
+    .btn-modal-danger {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    .btn-modal-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    
+    .help-text {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.8rem;
+    }
+    
+    /* FLASH MESSAGES */
+    .flash-messages {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+    }
+    
+    .alert {
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .alert-success {
+      background: rgba(46, 204, 113, 0.2);
+      border: 1px solid #2ecc71;
+      color: #2ecc71;
+    }
+    
+    .alert-error {
+      background: rgba(231, 76, 60, 0.2);
+      border: 1px solid #e74c3c;
+      color: #e74c3c;
+    }
+    
+    /* USER PROFILE */
+    .user-profile {
+      position: fixed;
+      top: 20px;
+      right: 30px;
+      z-index: 1000;
+    }
+    
+    .profile-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .profile-name {
+      color: white;
+      font-weight: 600;
+    }
+    
+    .logout-btn {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      padding: 5px 15px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.1);
+      transition: 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: #e74c3c;
+      color: white;
+    }
+    
+    /* LOGO */
+    .logo {
+      position: fixed;
+      top: 20px;
+      left: 30px;
+      z-index: 1000;
+    }
+    
+    .logo img {
+      height: 50px;
+    }
+    
+    /* NO RESULTS */
+    .no-results {
+      text-align: center;
+      padding: 60px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 20px;
+    }
+    
+    .no-results i {
+      font-size: 4rem;
+      color: #8f94fb;
+      margin-bottom: 20px;
+    }
+    
+    .no-results h3 {
+      color: white;
+      margin-bottom: 10px;
+    }
+    
+    .no-results p {
+      color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Perfil no canto superior direito -->
+  <div class="user-profile">
+    <div class="profile-container">
+      <div class="profile-icon">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">{{ session.usuario_nome }}</div>
+      </div>
+      <a href="{{ url_for('logout') }}" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </a>
+    </div>
+  </div>
+
+  <!-- Logo -->
+  <a href="/" class="logo">
+    <img src="{{ url_for('static', filename='imgs/Senac_logo.png') }}" alt="Logo">
+  </a>
+
+  <!-- Conteúdo -->
+  <div class="container">
+    <div class="header">
+      <h2><i class="fas fa-users" style="margin-right: 10px; color: #8f94fb;"></i> Usuários Cadastrados</h2>
+      <p class="subtitle">Visualize e gerencie todos os usuários registrados no sistema</p>
+    </div>
+
+    <!-- CONTROLES DE BUSCA E FILTRO -->
+    <div class="controls-container">
+      <div class="search-box">
+        <input type="text" 
+               id="searchInput" 
+               class="search-input" 
+               placeholder="Buscar por nome, email ou ID...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      
+      <select id="filterSelect" class="filter-select">
+        <option value="all">Todos os usuários</option>
+        <option value="name">Ordenar por nome (A-Z)</option>
+        <option value="name_desc">Ordenar por nome (Z-A)</option>
+        <option value="id">Ordenar por ID (crescente)</option>
+        <option value="id_desc">Ordenar por ID (decrescente)</option>
+      </select>
+    </div>
+
+    <!-- INFO DE RESULTADOS -->
+    <div class="results-info">
+      <div>
+        <i class="fas fa-chart-bar" style="margin-right: 8px; color: #8f94fb;"></i>
+        Mostrando <span class="results-count" id="currentResults">0</span> de 
+        <span class="results-count" id="totalResults">0</span> usuários
+        <span id="pageInfo"> (Página 1)</span>
+      </div>
+      <div id="searchInfo" style="color: #8f94fb; font-size: 0.9rem;"></div>
+    </div>
+
+    <!-- TABELA DE USUÁRIOS - APENAS 6 COLUNAS -->
+    <div class="users-table-container">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th width="8%">ID</th>
+            <th width="20%">Nome</th>
+            <th width="22%">Email</th>
+            <th width="13%">Telefone</th>
+            <th width="12%">Nascimento</th>
+            <th width="15%">Senha</th>
+            <th width="10%">Ações</th>
+          </tr>
+        </thead>
+
+        <tbody id="usersTableBody">
+          {% for user in usuarios %}
+          <tr class="user-row" 
+              data-id="{{ user.id_candidato }}"
+              data-name="{{ user.nome_candidato|lower }}"
+              data-email="{{ user.email_candidato|lower }}">
+            <td><span class="id-badge">#{{ user.id_candidato }}</span></td>
+            <td><i class="fas fa-user-circle" style="color: #8f94fb; margin-right: 5px;"></i> {{ user.nome_candidato }}</td>
+            <td><i class="fas fa-envelope" style="color: #8f94fb; margin-right: 5px;"></i> {{ user.email_candidato }}</td>
+            <td class="telefone-cell"><i class="fas fa-phone-alt" style="color: #8f94fb; margin-right: 5px;"></i> {{ user.telefone_candidato if user.telefone_candidato and user.telefone_candidato != '-' else '-' }}</td>
+            <td><i class="fas fa-calendar-alt" style="color: #8f94fb; margin-right: 5px;"></i> {{ user.data_nascimento_formatada if user.data_nascimento_formatada else '-' }}</td>
+            <td>
+              <span class="senha-hash" title="{{ user.senha }}">
+                <i class="fas fa-lock" style="margin-right: 5px; color: #8f94fb;"></i>
+                {{ user.senha[:15] if user.senha else '' }}...
+              </span>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <button class="btnn edit-btn" 
+                        onclick="openEditModal(
+                          {{ user.id_candidato }}, 
+                          '{{ user.nome_candidato|replace("'", "\\'") }}', 
+                          '{{ user.email_candidato|replace("'", "\\'") }}',
+                          '{{ user.telefone_candidato|replace("'", "\\'") if user.telefone_candidato and user.telefone_candidato != '-' else '' }}',
+                          '{{ user.data_nascimento_c if user.data_nascimento_c else '' }}'
+                        )">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                
+                <button class="btnn delete-btn" 
+                        onclick="openDeleteModal({{ user.id_candidato }}, '{{ user.nome_candidato|replace("'", "\\'") }}')">
+                  <i class="fas fa-trash"></i> Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr id="noUsersRow">
+            <td colspan="7" style="text-align:center; padding: 60px;">
+              <i class="fas fa-users-slash" style="font-size: 4rem; color: #8f94fb; margin-bottom: 20px;"></i>
+              <h3 style="color: white; margin-bottom: 10px;">Nenhum usuário cadastrado</h3>
+              <p style="color: rgba(255,255,255,0.6);">Comece cadastrando um novo usuário</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MENSAGEM SEM RESULTADOS (Filtro) -->
+    <div id="noResultsMessage" class="no-results" style="display: none;">
+      <i class="fas fa-search"></i>
+      <h3>Nenhum usuário encontrado</h3>
+      <p>Tente ajustar sua busca ou filtro</p>
+    </div>
+
+    <!-- PAGINAÇÃO -->
+    <div class="pagination-container">
+      <div class="page-numbers" id="pageNumbers"></div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button id="prevPage" class="pagination-btn" disabled>
+          <i class="fas fa-chevron-left"></i> Anterior
+        </button>
+        <button id="nextPage" class="pagination-btn">
+          Próxima <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+        Página <span id="currentPage">1</span> de <span id="totalPages">1</span>
+      </div>
+    </div>
+
+    <!-- Botão voltar -->
+    <a href="/" class="btnn" style="margin-top: 30px; display: inline-flex; width: auto; background: rgba(52,152,219,0.2); color: #3498db; border: 1px solid #3498db;">
+      <i class="fas fa-arrow-left"></i> Voltar para a tela inicial
+    </a>
+  </div>
+
+  <!-- Modal de Edição -->
+  <div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fas fa-user-edit"></i> Editar Usuário</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="editForm" method="POST" action="/atualizar_usuario">
+        <div class="modal-body">
+          <input type="hidden" id="edit_id" name="id_candidato">
+          
+          <div class="form-group-modal">
+            <label for="edit_nome"><i class="fas fa-user"></i> Nome Completo *</label>
+            <input type="text" id="edit_nome" name="nome_candidato" class="form-control-modal" required>
+          </div>
+          
+          <div class="form-group-modal">
+            <label for="edit_email"><i class="fas fa-envelope"></i> Email *</label>
+            <input type="email" id="edit_email" name="email_candidato" class="form-control-modal" required>
+          </div>
+          
+          <div class="form-group-modal">
+            <label for="edit_telefone"><i class="fas fa-phone"></i> Telefone</label>
+            <input type="text" id="edit_telefone" name="telefone_candidato" class="form-control-modal" placeholder="(00) 00000-0000">
+          </div>
+          
+          <div class="form-group-modal">
+            <label for="edit_nascimento"><i class="fas fa-calendar"></i> Data de Nascimento</label>
+            <input type="date" id="edit_nascimento" name="data_nascimento_c" class="form-control-modal">
+          </div>
+          
+          <div class="form-group-modal">
+            <label for="edit_senha"><i class="fas fa-lock"></i> Nova Senha</label>
+            <input type="password" id="edit_senha" name="senha" class="form-control-modal" placeholder="Deixe em branco para manter a atual">
+            <span class="help-text">Preencha apenas se desejar alterar a senha</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-modal btn-modal-secondary" onclick="closeEditModal()">Cancelar</button>
+          <button type="submit" class="btn-modal btn-modal-primary"><i class="fas fa-save"></i> Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de Exclusão -->
+  <div id="deleteModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Exclusão</h3>
+        <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+      </div>
+      <form id="deleteForm" method="POST" action="/excluir_usuario">
+        <div class="modal-body">
+          <input type="hidden" id="delete_id" name="id_candidato">
+          <p id="deleteMessage" style="font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.9);"></p>
+          <div style="background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid #e74c3c; padding: 12px; border-radius: 5px; margin-top: 15px;">
+            <i class="fas fa-exclamation-circle"></i> <strong>Atenção:</strong> Esta ação não pode ser desfeita!
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-modal btn-modal-secondary" onclick="closeDeleteModal()">Cancelar</button>
+          <button type="submit" class="btn-modal btn-modal-danger"><i class="fas fa-trash"></i> Excluir</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer" style="margin-top: 50px; padding: 30px; background: rgba(0,0,0,0.3); text-align: center;">
+    <div class="footer-bottom">
+      <img src="{{ url_for('static', filename='imgs/logobranca.png') }}" alt="Logo SQW" style="height: 40px; margin-bottom: 15px;">
+      <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">© 2026 Turma 2025.2.235 Programação Web - SENAC • Todos os direitos reservados</p>
+    </div>
+  </footer>
+
+  <script>
+    // VARIÁVEIS GLOBAIS
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let allUsers = [];
+    let filteredUsers = [];
+
+    // INICIALIZAÇÃO
+    document.addEventListener('DOMContentLoaded', function() {
+      allUsers = Array.from(document.querySelectorAll('.user-row'));
+      filteredUsers = [...allUsers];
+      
+      if (allUsers.length === 0) {
+        const controls = document.querySelector('.controls-container');
+        const results = document.querySelector('.results-info');
+        const pagination = document.querySelector('.pagination-container');
+        if (controls) controls.style.display = 'none';
+        if (results) results.style.display = 'none';
+        if (pagination) pagination.style.display = 'none';
+        return;
+      }
+      
+      initializeControls();
+      updatePagination();
+      updateResultsInfo();
+      showPage(1);
+    });
+
+    function initializeControls() {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', function() {
+          currentSearch = this.value.toLowerCase().trim();
+          currentPage = 1;
+          filterAndSortUsers();
+        });
+      }
+      
+      const filterSelect = document.getElementById('filterSelect');
+      if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+          currentFilter = this.value;
+          currentPage = 1;
+          filterAndSortUsers();
+        });
+      }
+      
+      const prevBtn = document.getElementById('prevPage');
+      const nextBtn = document.getElementById('nextPage');
+      
+      if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+          if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+            updatePagination();
+          }
+        });
+      }
+      
+      if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+          const totalPages = parseInt(document.getElementById('totalPages').textContent);
+          if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+            updatePagination();
+          }
+        });
+      }
+    }
+
+    function filterAndSortUsers() {
+      filteredUsers = [...allUsers];
+      
+      if (currentSearch) {
+        filteredUsers = filteredUsers.filter(user => {
+          const name = user.dataset.name;
+          const email = user.dataset.email;
+          const id = user.querySelector('td:first-child').textContent.replace('#', '').toLowerCase();
+          
+          return name.includes(currentSearch) || 
+                 email.includes(currentSearch) || 
+                 id.includes(currentSearch);
+        });
+        
+        const searchInfo = document.getElementById('searchInfo');
+        if (searchInfo) {
+          if (filteredUsers.length > 0) {
+            searchInfo.innerHTML = `<i class="fas fa-search"></i> Resultados para: "${currentSearch}"`;
+            searchInfo.style.color = '#8f94fb';
+          } else {
+            searchInfo.innerHTML = `<i class="fas fa-exclamation-circle"></i> Nenhum resultado para: "${currentSearch}"`;
+            searchInfo.style.color = '#e74c3c';
+          }
+        }
+      } else {
+        const searchInfo = document.getElementById('searchInfo');
+        if (searchInfo) searchInfo.innerHTML = '';
+      }
+      
+      filteredUsers.sort((a, b) => {
+        switch(currentFilter) {
+          case 'name': return a.dataset.name.localeCompare(b.dataset.name);
+          case 'name_desc': return b.dataset.name.localeCompare(a.dataset.name);
+          case 'id': return parseInt(a.dataset.id) - parseInt(b.dataset.id);
+          case 'id_desc': return parseInt(b.dataset.id) - parseInt(a.dataset.id);
+          default: return parseInt(b.dataset.id) - parseInt(a.dataset.id);
+        }
+      });
+      
+      allUsers.forEach(user => user.style.display = 'none');
+      updatePagination();
+      updateResultsInfo();
+      showPage(1);
+    }
+
+    function updatePagination() {
+      const totalUsers = filteredUsers.length;
+      const totalPages = Math.ceil(totalUsers / itemsPerPage);
+      
+      if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+      
+      document.getElementById('totalPages').textContent = totalPages || 1;
+      document.getElementById('currentPage').textContent = currentPage || 1;
+      
+      const pageNumbers = document.getElementById('pageNumbers');
+      if (pageNumbers) {
+        pageNumbers.innerHTML = '';
+        
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (currentPage <= 3) endPage = Math.min(5, totalPages);
+        if (currentPage >= totalPages - 2) startPage = Math.max(1, totalPages - 4);
+        
+        if (startPage > 1) {
+          const firstBtn = document.createElement('button');
+          firstBtn.className = 'page-btn';
+          firstBtn.textContent = '1';
+          firstBtn.onclick = () => goToPage(1);
+          pageNumbers.appendChild(firstBtn);
+          if (startPage > 2) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.style.padding = '0 10px';
+            ellipsis.style.color = 'rgba(255,255,255,0.5)';
+            pageNumbers.appendChild(ellipsis);
+          }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          const btn = document.createElement('button');
+          btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+          btn.textContent = i;
+          btn.onclick = () => goToPage(i);
+          pageNumbers.appendChild(btn);
+        }
+        
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            const ellipsis = document.createElement('span');
+            ellipsis.textContent = '...';
+            ellipsis.style.padding = '0 10px';
+            ellipsis.style.color = 'rgba(255,255,255,0.5)';
+            pageNumbers.appendChild(ellipsis);
+          }
+          const lastBtn = document.createElement('button');
+          lastBtn.className = 'page-btn';
+          lastBtn.textContent = totalPages;
+          lastBtn.onclick = () => goToPage(totalPages);
+          pageNumbers.appendChild(lastBtn);
+        }
+      }
+      
+      document.getElementById('prevPage').disabled = currentPage === 1;
+      document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
+      
+      const noResults = document.getElementById('noResultsMessage');
+      const noUsersRow = document.getElementById('noUsersRow');
+      const pagination = document.querySelector('.pagination-container');
+      const results = document.querySelector('.results-info');
+      
+      if (filteredUsers.length === 0) {
+        if (noUsersRow) noUsersRow.style.display = 'none';
+        if (noResults) noResults.style.display = 'block';
+        if (pagination) pagination.style.display = 'none';
+        if (results) results.style.display = 'none';
+      } else {
+        if (noUsersRow) noUsersRow.style.display = 'none';
+        if (noResults) noResults.style.display = 'none';
+        if (pagination) pagination.style.display = 'flex';
+        if (results) results.style.display = 'flex';
+      }
+    }
+
+    function goToPage(page) {
+      currentPage = page;
+      showPage(currentPage);
+      updatePagination();
+    }
+
+    function showPage(page) {
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, filteredUsers.length);
+      
+      allUsers.forEach(user => user.style.display = 'none');
+      
+      for (let i = startIndex; i < endIndex; i++) {
+        if (filteredUsers[i]) filteredUsers[i].style.display = '';
+      }
+      
+      document.getElementById('currentPage').textContent = page;
+      updateResultsInfo();
+      document.getElementById('pageInfo').textContent = ` (Página ${page})`;
+    }
+
+    function updateResultsInfo() {
+      const totalUsers = filteredUsers.length;
+      const startIndex = (currentPage - 1) * itemsPerPage + 1;
+      const endIndex = Math.min(startIndex + itemsPerPage - 1, totalUsers);
+      
+      document.getElementById('totalResults').textContent = totalUsers;
+      document.getElementById('currentResults').textContent = totalUsers > 0 ? `${startIndex}-${endIndex}` : '0';
+    }
+
+    // FUNÇÕES DOS MODAIS
+    function openEditModal(id, nome, email, telefone, nascimento) {
+      document.getElementById('edit_id').value = id;
+      document.getElementById('edit_nome').value = nome || '';
+      document.getElementById('edit_email').value = email || '';
+      document.getElementById('edit_telefone').value = telefone || '';
+      document.getElementById('edit_nascimento').value = nascimento || '';
+      document.getElementById('edit_senha').value = '';
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    function openDeleteModal(id, nome) {
+      document.getElementById('delete_id').value = id;
+      document.getElementById('deleteMessage').innerHTML = 
+        `Você está prestes a excluir o usuário:<br><br>
+        <strong style="color: #8f94fb; font-size: 1.2rem;">${nome}</strong><br><br>
+        Tem certeza que deseja continuar?`;
+      document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal-overlay')) {
+        event.target.style.display = 'none';
+      }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      const nome = document.getElementById('edit_nome').value.trim();
+      const email = document.getElementById('edit_email').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      
+      if (!nome || !email) {
+        e.preventDefault();
+        alert('Por favor, preencha todos os campos obrigatórios (*).');
+        return false;
+      }
+      
+      if (!emailRegex.test(email)) {
+        e.preventDefault();
+        alert('Por favor, insira um email válido.');
+        return false;
+      }
+    });
+
+    setTimeout(function() {
+      const flashMessages = document.querySelector('.flash-messages');
+      if (flashMessages) {
+        flashMessages.style.transition = 'opacity 0.5s';
+        flashMessages.style.opacity = '0';
+        setTimeout(() => flashMessages.style.display = 'none', 500);
+      }
+    }, 5000);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeEditModal();
+        closeDeleteModal();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        document.getElementById('searchInput').focus();
+      }
+    });
+  </script>
+</body>
+</html>

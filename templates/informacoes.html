@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SISTEMA DE QUALIFICAÇÃO WEB</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="../static/css/index.css">
+  <link rel="stylesheet" href="../static/css/footer.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Perfil no canto superior direito -->
+<div class="user-profile">
+  <div class="profile-container" id="loggedInState">
+    <div class="profile-icon">
+      <i class="fas fa-user"></i>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name">{{ session.usuario_nome }}</div>
+    </div>
+    <!-- MUDEI: href para /logout (não para /) -->
+    <a href="{{ url_for('logout') }}" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Sair
+    </a>
+  </div>
+</div>
+    
+    <!-- Estado: Não logado (oculto por padrão) -->
+    <div class="profile-container" id="loggedOutState" style="display: none;">
+      <button class="login-btn" onclick="login()">
+        <i class="fas fa-sign-in-alt"></i> Entrar
+      </button>
+    </div>
+  </div>
+
+  <!-- Logo -->
+  <a href="/" class="logo">
+    <div class="logo-container">
+      <img src="../static/imgs/Senac_logo.png" alt="Logo">
+      
+    </div>
+  </a>
+
+  <!-- Conteúdo -->
+  <div class="container">
+
+    <div class="header">
+     <h2> Informações Sobre os Cursos</h2> 
+    </div>
+
+<div class="cards-grid">
+  <!-- Carrossel de Imagens -->
+  <div class="carousel-container">
+    <div class="carousel">
+      <div class="carousel-slide active">
+        <img src="../static/imgs/progweb.jpg" alt="Curso 1">
+        <div class="slide-caption">
+          <h3>Programação Web</h3>
+          <p>Desenvolva sites modernos e responsivos aprendendo HTML, CSS e JavaScript na prática, mesmo sem experiência.</p>
+        </div>
+      </div>
+      <div class="carousel-slide">
+        <img src="../static/imgs/banco.jpg" alt="Curso 2">
+        <div class="slide-caption">
+          <h3>Banco de Dados</h3>
+          <p>Aprenda a criar, organizar e gerenciar bancos de dados eficientes usando as principais ferramentas do mercado.</p>
+        </div>
+      </div>
+      <div class="carousel-slide">
+        <img src="../static/imgs/montar.jpg" alt="Curso 3">
+        <div class="slide-caption">
+          <h3>Montagem e manutenção de computadores</h3>
+          <p>Aprenda a montar, configurar e fazer manutenção em computadores, identificando e resolvendo problemas de hardware.</p>
+        </div>
+      </div>
+      <div class="carousel-slide">
+        <img src="../static/imgs/informatica.jpg" alt="Curso 4">
+        <div class="slide-caption">
+          <h3>Informática básica</h3>
+          <p>Conheça os fundamentos do computador, sistemas operacionais e aplicativos essenciais para o dia a dia.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Botões de navegação -->
+    <button class="carousel-btn prev-btn" onclick="moveSlide(-1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="carousel-btn next-btn" onclick="moveSlide(1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+    
+    <!-- Indicadores -->
+    <div class="carousel-indicators">
+      <span class="indicator active" onclick="goToSlide(0)"></span>
+      <span class="indicator" onclick="goToSlide(1)"></span>
+      <span class="indicator" onclick="goToSlide(2)"></span>
+      <span class="indicator" onclick="goToSlide(3)"></span>
+    </div>
+    
+      
+    </div>
+
+  </div>
+      <a href="/" class="btnn linkmenuprincipal">
+  <i class="fas fa-arrow-left"></i> Voltar para a tela inicial
+</a>
+</div>
+
+  </div>
+
+
+  <footer class="footer">
+    <div class="footer-bottom">
+
+        <p class="footer-text">
+<center>
+          <img src="../static/imgs/logobranca.png" alt="Logo SQW" class="footer-logo">
+</center>
+<br>
+
+            © 2026 Turma 2025.2.235 Programação Web - SENAC
+            • Todos os direitos reservados
+        </p>
+
+       
+
+    </div>
+</footer>
+
+
+
+<script>
+// Variáveis do carrossel
+let currentSlide = 0;
+let autoplayInterval;
+let isAutoplayActive = true;
+const slides = document.querySelectorAll('.carousel-slide');
+const indicators = document.querySelectorAll('.indicator');
+const autoplayIcon = document.getElementById('autoplayIcon');
+const autoplayLabel = document.getElementById('autoplayLabel');
+// Inicializar carrossel
+function initCarousel() {
+  // Configurar autoplay
+  startAutoplay(); 
+  // Mostrar primeiro slide
+  showSlide(currentSlide);
+}
+// Mostrar slide específico
+function showSlide(index) {
+  // Remover classe active de todos os slides
+  slides.forEach(slide => slide.classList.remove('active'));
+  indicators.forEach(indicator => indicator.classList.remove('active')); 
+  // Atualizar índice atual
+  currentSlide = index; 
+  // Ajustar índice se necessário
+  if (currentSlide >= slides.length) currentSlide = 0;
+  if (currentSlide < 0) currentSlide = slides.length - 1;
+  // Adicionar classe active ao slide atual
+  slides[currentSlide].classList.add('active');
+  indicators[currentSlide].classList.add('active');
+}
+// Mover para próximo/anterior
+function moveSlide(direction) {
+  showSlide(currentSlide + direction);
+  resetAutoplay();
+}
+// Ir para slide específico
+function goToSlide(index) {
+  showSlide(index);
+  resetAutoplay();
+}
+// Autoplay
+function startAutoplay() {
+  if (isAutoplayActive) {
+    autoplayInterval = setInterval(() => {
+      moveSlide(1);
+    }, 10000); // Muda a cada 10 segundos
+  }
+}
+function stopAutoplay() {
+  clearInterval(autoplayInterval);
+}
+function resetAutoplay() {
+  stopAutoplay();
+  if (isAutoplayActive) {
+    startAutoplay();
+  }
+}
+function toggleAutoplay() {
+  isAutoplayActive = !isAutoplayActive; 
+  if (isAutoplayActive) {
+    startAutoplay();
+    autoplayIcon.className = 'fas fa-pause';
+    autoplayLabel.textContent = 'Pausar';
+  } else {
+    stopAutoplay();
+    autoplayIcon.className = 'fas fa-play';
+    autoplayLabel.textContent = 'Reproduzir';
+  }
+}
+// Pausar autoplay quando o mouse estiver sobre o carrossel
+document.querySelector('.carousel-container').addEventListener('mouseenter', () => {
+  if (isAutoplayActive) {
+    stopAutoplay();
+  }
+});
+document.querySelector('.carousel-container').addEventListener('mouseleave', () => {
+  if (isAutoplayActive) {
+    startAutoplay();
+  }
+});
+// Inicializar quando a página carregar
+document.addEventListener('DOMContentLoaded', initCarousel);
+
+// Funções de login/logout (mantenha as que você já tem)
+function logout() {
+  document.getElementById('loggedInState').style.display = 'none';
+  document.getElementById('loggedOutState').style.display = 'flex';
+}
+function login() {
+  document.getElementById('loggedInState').style.display = 'flex';
+  document.getElementById('loggedOutState').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
