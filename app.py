@@ -6,6 +6,9 @@ import hashlib
 import re
 import os
 
+# REMOVIDO: from dotenv import load_dotenv
+# REMOVIDO: load_dotenv() - Não usar no Render!
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'chave_fallback_somente_desenvolvimento_12345')
 
@@ -19,15 +22,8 @@ def get_connection():
     if not database_url:
         error_msg = "❌ ERRO: DATABASE_URL não configurada nas variáveis de ambiente!"
         print(error_msg)
-        # Fallback para desenvolvimento local (NÃO USAR NO RENDER)
-        DB_CONFIG = {
-            'host': os.environ.get('DB_HOST', 'localhost'),
-            'database': os.environ.get('DB_NAME', 'postgres'),
-            'user': os.environ.get('DB_USER', 'postgres'),
-            'password': os.environ.get('DB_PASSWORD', '5353'),
-            'port': os.environ.get('DB_PORT', '5432')
-        }
-        return psycopg2.connect(**DB_CONFIG)
+        print("📋 Variáveis encontradas:", list(os.environ.keys()))
+        raise Exception(error_msg)
     
     try:
         # Garantir SSL para Neon
@@ -37,11 +33,14 @@ def get_connection():
             else:
                 database_url += '?sslmode=require'
         
+        print("🔄 Tentando conectar ao Neon...")
         conn = psycopg2.connect(database_url)
+        print("✅ Conexão estabelecida com sucesso!")
         return conn
         
     except Exception as e:
         print(f"❌ Erro de conexão: {str(e)}")
+        print("🔍 Dica: Verifique se o IP do Render está liberado no Neon")
         raise
 
 # ==================== FUNÇÕES UTILITÁRIAS ====================
@@ -53,11 +52,25 @@ def validate_email(email):
     return re.match(pattern, email) is not None
 
 def validate_date(date_string):
+    """Valida data no formato YYYY-MM-DD"""
     try:
         datetime.strptime(date_string, '%Y-%m-%d')
         return True
     except ValueError:
         return False
+
+def converter_data_br_para_iso(data_br):
+    """Converte data do formato DD/MM/YYYY para YYYY-MM-DD"""
+    try:
+        # Remove espaços em branco
+        data_br = data_br.strip()
+        # Verifica se está no formato DD/MM/YYYY
+        if re.match(r'\d{2}/\d{2}/\d{4}', data_br):
+            dia, mes, ano = data_br.split('/')
+            return f"{ano}-{mes}-{dia}"
+        return data_br
+    except:
+        return data_br
 
 def calcular_idade(data_nascimento_str):
     try:
@@ -85,7 +98,7 @@ def formatar_telefone(telefone):
 # ==================== DECORATOR DE LOGIN ====================
 def login_required(f):
     def decorated_function(*args, **kwargs):
-        public_pages = ['login', 'cadastro', 'health_check', 'test_db_connection']
+        public_pages = ['login', 'cadastro', 'health_check', 'test_db', 'debug_env']
         
         if request.endpoint not in public_pages:
             if 'usuario_id' not in session:
@@ -97,24 +110,44 @@ def login_required(f):
     decorated_function.__name__ = f.__name__
     return decorated_function
 
-# ==================== ROTAS DE TESTE ====================
+# ==================== ROTAS DE DEBUG ====================
+
+@app.route("/debug-env")
+def debug_env():
+    """Rota para debug - MOSTRA AS VARIÁVEIS DE AMBIENTE (use apenas temporariamente)"""
+    env_vars = {
+        "DATABASE_URL_existe": bool(os.environ.get('DATABASE_URL')),
+        "FLASK_ENV": os.environ.get('FLASK_ENV', 'não configurado'),
+        "SECRET_KEY_existe": bool(os.environ.get('SECRET_KEY')),
+    }
+    
+    # MOSTRA PARTE DA DATABASE_URL (escondendo senha)
+    db_url = os.environ.get('DATABASE_URL', '')
+    if db_url:
+        # Esconde a senha por segurança
+        masked_url = re.sub(r':([^@]+)@', ':****@', db_url)
+        env_vars["DATABASE_URL_mascarada"] = masked_url
+    else:
+        env_vars["DATABASE_URL_mascarada"] = "Não configurada"
+    
+    return jsonify(env_vars)
 
 @app.route("/test-db")
-def test_db_connection():
-    """Rota para testar a conexão com o banco"""
+def test_db():
+    """Rota para testar conexão com o banco"""
     results = {
-        "status": "testing",
-        "database_url_configured": False,
-        "tests": []
+        "status": "testando",
+        "database_url_configurada": False,
+        "testes": []
     }
     
     # Teste 1: Verificar se DATABASE_URL existe
     database_url = os.environ.get('DATABASE_URL')
-    results["database_url_configured"] = bool(database_url)
+    results["database_url_configurada"] = bool(database_url)
     
     if not database_url:
-        results["status"] = "error"
-        results["error"] = "DATABASE_URL não configurada no Render"
+        results["status"] = "erro"
+        results["mensagem"] = "DATABASE_URL não configurada"
         return jsonify(results), 500
     
     try:
@@ -130,27 +163,24 @@ def test_db_connection():
             ORDER BY table_name;
         """)
         tables = [row[0] for row in cursor.fetchall()]
-        results["tables_found"] = tables
+        results["tabelas_encontradas"] = tables
         
-        # Teste 4: Contar registros nas tabelas principais
-        table_counts = {}
-        for table in ['candidato', 'questionario', 'respostas', 'resultados_questionario']:
-            if table in tables:
-                cursor.execute(f"SELECT COUNT(*) FROM {table}")
-                count = cursor.fetchone()[0]
-                table_counts[table] = count
-        
-        results["table_counts"] = table_counts
-        results["status"] = "success"
-        results["message"] = "✅ Conexão com banco OK!"
+        # Teste 4: Contar registros
+        if 'candidato' in tables:
+            cursor.execute("SELECT COUNT(*) FROM candidato")
+            count = cursor.fetchone()[0]
+            results["total_candidatos"] = count
         
         cursor.close()
         conn.close()
         
+        results["status"] = "sucesso"
+        results["mensagem"] = "✅ Conexão com banco OK!"
+        
     except Exception as e:
-        results["status"] = "error"
-        results["error"] = str(e)
-        results["error_type"] = type(e).__name__
+        results["status"] = "erro"
+        results["erro"] = str(e)
+        results["tipo_erro"] = type(e).__name__
     
     return jsonify(results)
 
@@ -233,7 +263,7 @@ def login():
             
         except Exception as e:
             print(f"Erro no login: {str(e)}")
-            flash('Erro ao fazer login. Tente novamente.', 'error')
+            flash(f'Erro ao fazer login: {str(e)}', 'error')
     
     return render_template("login.html")
 
@@ -243,49 +273,60 @@ def cadastro():
         return redirect(url_for('index'))
     
     hoje = date.today()
-    max_date = hoje.replace(year=hoje.year - 15)
-    min_date = hoje.replace(year=hoje.year - 120)
+    max_date = hoje.replace(year=hoje.year - 15).strftime('%Y-%m-%d')
+    min_date = hoje.replace(year=hoje.year - 120).strftime('%Y-%m-%d')
     
     if request.method == 'POST':
-        nome = request.form['nome']
-        email = request.form['email']
-        telefone = request.form.get('telefone', '')
-        data_nascimento = request.form['data_nascimento']
-        senha = request.form['senha']
-        confirmar_senha = request.form['confirmar_senha']
-        
-        if senha != confirmar_senha:
-            flash('❌ As senhas não coincidem.', 'error')
-            return render_template("cadastro.html", max_date=max_date.strftime('%Y-%m-%d'), min_date=min_date.strftime('%Y-%m-%d'))
-        
-        if not validate_email(email):
-            flash('❌ Formato de email inválido!', 'error')
-            return render_template("cadastro.html", max_date=max_date.strftime('%Y-%m-%d'), min_date=min_date.strftime('%Y-%m-%d'))
-        
-        if not validate_date(data_nascimento):
-            flash('❌ Data de nascimento inválida!', 'error')
-            return render_template("cadastro.html", max_date=max_date.strftime('%Y-%m-%d'), min_date=min_date.strftime('%Y-%m-%d'))
-        
-        idade = calcular_idade(data_nascimento)
-        if idade < 15:
-            flash(f'❌ Idade insuficiente: {idade} anos (mínimo: 15 anos)', 'error')
-            return render_template("cadastro.html", max_date=max_date.strftime('%Y-%m-%d'), min_date=min_date.strftime('%Y-%m-%d'))
-        
-        if len(senha) < 6:
-            flash('❌ A senha deve ter no mínimo 6 caracteres!', 'error')
-            return render_template("cadastro.html", max_date=max_date.strftime('%Y-%m-%d'), min_date=min_date.strftime('%Y-%m-%d'))
-        
         try:
+            # Pegar dados do formulário
+            nome = request.form['nome']
+            email = request.form['email']
+            telefone = request.form.get('telefone', '')
+            data_nascimento_input = request.form['data_nascimento']
+            senha = request.form['senha']
+            confirmar_senha = request.form['confirmar_senha']
+            
+            print(f"📝 Dados recebidos: nome={nome}, email={email}, data={data_nascimento_input}")
+            
+            # CONVERTER DATA DO FORMATO BR PARA ISO
+            data_nascimento = converter_data_br_para_iso(data_nascimento_input)
+            print(f"🔄 Data convertida: {data_nascimento_input} -> {data_nascimento}")
+            
+            # Validações
+            if senha != confirmar_senha:
+                flash('❌ As senhas não coincidem.', 'error')
+                return render_template("cadastro.html", max_date=max_date, min_date=min_date)
+            
+            if not validate_email(email):
+                flash('❌ Formato de email inválido!', 'error')
+                return render_template("cadastro.html", max_date=max_date, min_date=min_date)
+            
+            if not validate_date(data_nascimento):
+                flash(f'❌ Data de nascimento inválida! Use o formato DD/MM/AAAA. Recebido: {data_nascimento_input}', 'error')
+                return render_template("cadastro.html", max_date=max_date, min_date=min_date)
+            
+            idade = calcular_idade(data_nascimento)
+            if idade < 15:
+                flash(f'❌ Idade insuficiente: {idade} anos (mínimo: 15 anos)', 'error')
+                return render_template("cadastro.html", max_date=max_date, min_date=min_date)
+            
+            if len(senha) < 6:
+                flash('❌ A senha deve ter no mínimo 6 caracteres!', 'error')
+                return render_template("cadastro.html", max_date=max_date, min_date=min_date)
+            
+            # Conectar ao banco
             conn = get_connection()
             cursor = conn.cursor()
             
+            # Verificar se email já existe
             cursor.execute("SELECT id_candidato FROM candidato WHERE email_candidato = %s", (email,))
             if cursor.fetchone():
                 flash('❌ Este email já está cadastrado.', 'error')
                 cursor.close()
                 conn.close()
-                return render_template("cadastro.html", max_date=max_date.strftime('%Y-%m-%d'), min_date=min_date.strftime('%Y-%m-%d'))
+                return render_template("cadastro.html", max_date=max_date, min_date=min_date)
             
+            # Inserir novo usuário
             senha_hash = hash_senha(senha)
             
             cursor.execute("""
@@ -302,6 +343,7 @@ def cadastro():
             
             conn.commit()
             
+            # Criar sessão
             session['usuario_id'] = user_id
             session['usuario_nome'] = user_nome
             session['usuario_email'] = user_email
@@ -313,27 +355,36 @@ def cadastro():
             flash(f'✅ Cadastro realizado com sucesso! Bem-vindo(a), {user_nome}!', 'success')
             return redirect(url_for('index'))
             
-        except Exception as e:
-            print(f"Erro no cadastro: {str(e)}")
+        except psycopg2.Error as e:
+            print(f"❌ Erro PostgreSQL no cadastro: {str(e)}")
             if 'conn' in locals():
                 conn.rollback()
                 conn.close()
-            flash('Erro ao realizar cadastro. Tente novamente.', 'error')
+            flash(f'Erro no banco de dados: {str(e)}', 'error')
+            
+        except Exception as e:
+            print(f"❌ Erro geral no cadastro: {str(e)}")
+            print(f"Tipo do erro: {type(e).__name__}")
+            if 'conn' in locals():
+                conn.rollback()
+                conn.close()
+            flash(f'Erro ao realizar cadastro: {str(e)}', 'error')
     
-    return render_template("cadastro.html", 
-                         max_date=max_date.strftime('%Y-%m-%d'),
-                         min_date=min_date.strftime('%Y-%m-%d'))
+    return render_template("cadastro.html", max_date=max_date, min_date=min_date)
 
 @app.route("/api/verificar-idade", methods=['POST'])
 def verificar_idade():
     try:
-        data_nascimento = request.form.get('data_nascimento', '').strip()
+        data_nascimento_input = request.form.get('data_nascimento', '').strip()
         
-        if not data_nascimento:
+        if not data_nascimento_input:
             return jsonify({'success': False, 'message': 'Informe uma data de nascimento'}), 400
         
+        # Converter data do formato BR para ISO
+        data_nascimento = converter_data_br_para_iso(data_nascimento_input)
+        
         if not validate_date(data_nascimento):
-            return jsonify({'success': False, 'message': 'Data de nascimento inválida!'}), 400
+            return jsonify({'success': False, 'message': 'Data de nascimento inválida! Use DD/MM/AAAA'}), 400
         
         idade = calcular_idade(data_nascimento)
         idade_minima = 15
@@ -354,7 +405,7 @@ def verificar_idade():
         
     except Exception as e:
         print(f"Erro ao verificar idade: {e}")
-        return jsonify({'success': False, 'message': 'Erro ao verificar idade'}), 500
+        return jsonify({'success': False, 'message': f'Erro ao verificar idade: {str(e)}'}), 500
 
 @app.route("/logout")
 def logout():
