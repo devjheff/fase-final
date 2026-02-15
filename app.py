@@ -5,29 +5,21 @@ from datetime import datetime, date
 import hashlib
 import re
 import os
-from dotenv import load_dotenv
-
-# Carrega variáveis de ambiente
-load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'chave_fallback_somente_desenvolvimento_12345')
 
-# ==================== CONFIGURAÇÃO DO BANCO ====================
+# ==================== CONFIGURAÇÃO DO BANCO COM DEBUG ====================
 def get_connection():
     """Obtém conexão com o banco de dados usando DATABASE_URL do ambiente"""
+    
+    # PEGAR A DATABASE_URL DIRETO DAS VARIÁVEIS DE AMBIENTE
     database_url = os.environ.get('DATABASE_URL')
     
-    if database_url:
-        # Para Neon, precisamos garantir que o SSL está habilitado
-        if 'sslmode' not in database_url:
-            if '?' in database_url:
-                database_url += '&sslmode=require'
-            else:
-                database_url += '?sslmode=require'
-        return psycopg2.connect(database_url)
-    else:
-        # Fallback para desenvolvimento local
+    if not database_url:
+        error_msg = "❌ ERRO: DATABASE_URL não configurada nas variáveis de ambiente!"
+        print(error_msg)
+        # Fallback para desenvolvimento local (NÃO USAR NO RENDER)
         DB_CONFIG = {
             'host': os.environ.get('DB_HOST', 'localhost'),
             'database': os.environ.get('DB_NAME', 'postgres'),
@@ -36,6 +28,21 @@ def get_connection():
             'port': os.environ.get('DB_PORT', '5432')
         }
         return psycopg2.connect(**DB_CONFIG)
+    
+    try:
+        # Garantir SSL para Neon
+        if 'sslmode' not in database_url:
+            if '?' in database_url:
+                database_url += '&sslmode=require'
+            else:
+                database_url += '?sslmode=require'
+        
+        conn = psycopg2.connect(database_url)
+        return conn
+        
+    except Exception as e:
+        print(f"❌ Erro de conexão: {str(e)}")
+        raise
 
 # ==================== FUNÇÕES UTILITÁRIAS ====================
 def hash_senha(senha):
@@ -78,7 +85,7 @@ def formatar_telefone(telefone):
 # ==================== DECORATOR DE LOGIN ====================
 def login_required(f):
     def decorated_function(*args, **kwargs):
-        public_pages = ['login', 'cadastro', 'health_check', 'setup_database']
+        public_pages = ['login', 'cadastro', 'health_check', 'test_db_connection']
         
         if request.endpoint not in public_pages:
             if 'usuario_id' not in session:
@@ -89,6 +96,83 @@ def login_required(f):
     
     decorated_function.__name__ = f.__name__
     return decorated_function
+
+# ==================== ROTAS DE TESTE ====================
+
+@app.route("/test-db")
+def test_db_connection():
+    """Rota para testar a conexão com o banco"""
+    results = {
+        "status": "testing",
+        "database_url_configured": False,
+        "tests": []
+    }
+    
+    # Teste 1: Verificar se DATABASE_URL existe
+    database_url = os.environ.get('DATABASE_URL')
+    results["database_url_configured"] = bool(database_url)
+    
+    if not database_url:
+        results["status"] = "error"
+        results["error"] = "DATABASE_URL não configurada no Render"
+        return jsonify(results), 500
+    
+    try:
+        # Teste 2: Conectar ao banco
+        conn = psycopg2.connect(database_url + "?sslmode=require")
+        cursor = conn.cursor()
+        
+        # Teste 3: Listar tabelas
+        cursor.execute("""
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public'
+            ORDER BY table_name;
+        """)
+        tables = [row[0] for row in cursor.fetchall()]
+        results["tables_found"] = tables
+        
+        # Teste 4: Contar registros nas tabelas principais
+        table_counts = {}
+        for table in ['candidato', 'questionario', 'respostas', 'resultados_questionario']:
+            if table in tables:
+                cursor.execute(f"SELECT COUNT(*) FROM {table}")
+                count = cursor.fetchone()[0]
+                table_counts[table] = count
+        
+        results["table_counts"] = table_counts
+        results["status"] = "success"
+        results["message"] = "✅ Conexão com banco OK!"
+        
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        results["status"] = "error"
+        results["error"] = str(e)
+        results["error_type"] = type(e).__name__
+    
+    return jsonify(results)
+
+@app.route("/health")
+def health_check():
+    """Rota para verificar se o banco está funcionando"""
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        cursor.close()
+        conn.close()
+        return jsonify({
+            "status": "healthy", 
+            "database": "connected",
+            "environment": os.environ.get('FLASK_ENV', 'development')
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy", 
+            "error": str(e)
+        }), 500
 
 # ==================== ROTAS PÚBLICAS ====================
 
@@ -125,12 +209,16 @@ def login():
                 session['usuario_email'] = candidato['email_candidato']
                 session['logged_in'] = True
                 
-                # Atualizar último login
-                cursor.execute("""
-                    UPDATE candidato SET ultimo_login = CURRENT_TIMESTAMP 
-                    WHERE id_candidato = %s
-                """, (candidato['id_candidato'],))
-                conn.commit()
+                # Atualizar último login (se a coluna existir)
+                try:
+                    cursor.execute("""
+                        UPDATE candidato SET ultimo_login = CURRENT_TIMESTAMP 
+                        WHERE id_candidato = %s
+                    """, (candidato['id_candidato'],))
+                    conn.commit()
+                except:
+                    # Coluna pode não existir, ignorar
+                    pass
                 
                 cursor.close()
                 conn.close()
@@ -273,188 +361,6 @@ def logout():
     session.clear()
     flash('👋 Você foi desconectado com sucesso.', 'info')
     return redirect(url_for('login'))
-
-# ==================== ROTAS DE VERIFICAÇÃO ====================
-
-@app.route("/health")
-def health_check():
-    """Rota para verificar se o banco está funcionando"""
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT 1")
-        cursor.close()
-        conn.close()
-        return jsonify({
-            "status": "healthy", 
-            "database": "connected",
-            "environment": os.environ.get('FLASK_ENV', 'development')
-        }), 200
-    except Exception as e:
-        return jsonify({
-            "status": "unhealthy", 
-            "error": str(e)
-        }), 500
-
-@app.route("/setup-db")
-def setup_database():
-    """Rota para criar as tabelas (apenas em desenvolvimento)"""
-    # Proteção para não executar em produção
-    if os.environ.get('FLASK_ENV') == 'production':
-        # Verificar se é uma requisição local ou com chave secreta
-        if request.remote_addr != '127.0.0.1' and request.args.get('key') != os.environ.get('SETUP_KEY', 'setup123'):
-            return jsonify({"error": "Acesso negado"}), 403
-    
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        
-        # Criar tabela candidato se não existir
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS candidato (
-                id_candidato SERIAL PRIMARY KEY,
-                nome_candidato VARCHAR(100) NOT NULL,
-                email_candidato VARCHAR(100) NOT NULL UNIQUE,
-                telefone_candidato VARCHAR(20),
-                data_nascimento_c DATE NOT NULL,
-                senha VARCHAR(64) NOT NULL,
-                data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                ultimo_login TIMESTAMP,
-                ativo BOOLEAN DEFAULT TRUE
-            )
-        """)
-        
-        # Criar tabela questionario se não existir
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS questionario (
-                n_pergunta INTEGER PRIMARY KEY,
-                descricao TEXT NOT NULL,
-                ativo BOOLEAN DEFAULT TRUE,
-                ordem_exibicao INTEGER,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        
-        # Criar tabela respostas se não existir
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS respostas (
-                id_resposta SERIAL PRIMARY KEY,
-                n_pergunta INTEGER NOT NULL,
-                n_resposta INTEGER NOT NULL,
-                resposta_01 VARCHAR(255) NOT NULL,
-                peso_informatica INTEGER DEFAULT 0,
-                peso_web INTEGER DEFAULT 0,
-                peso_manutencao INTEGER DEFAULT 0,
-                peso_dados INTEGER DEFAULT 0,
-                ativo BOOLEAN DEFAULT TRUE,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (n_pergunta) REFERENCES questionario(n_pergunta) ON DELETE CASCADE,
-                UNIQUE(n_pergunta, n_resposta)
-            )
-        """)
-        
-        # Criar tabela resultados_questionario se não existir
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS resultados_questionario (
-                id_resultado SERIAL PRIMARY KEY,
-                id_candidato INTEGER NOT NULL,
-                data_realizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                pontuacao_informatica INTEGER DEFAULT 0,
-                pontuacao_web INTEGER DEFAULT 0,
-                pontuacao_manutencao INTEGER DEFAULT 0,
-                pontuacao_dados INTEGER DEFAULT 0,
-                curso_recomendado VARCHAR(50),
-                FOREIGN KEY (id_candidato) REFERENCES candidato(id_candidato) ON DELETE CASCADE
-            )
-        """)
-        
-        # Verificar se já existem perguntas cadastradas
-        cursor.execute("SELECT COUNT(*) FROM questionario")
-        count = cursor.fetchone()[0]
-        
-        if count == 0:
-            # Inserir perguntas do questionário
-            perguntas = [
-                (1, 'Como você se sente ao resolver problemas complexos?', 1),
-                (2, 'Qual dessas atividades você mais gosta?', 2),
-                (3, 'Em um trabalho em equipe, você prefere:', 3),
-                (4, 'O que você acha mais interessante?', 4),
-                (5, 'Qual área da tecnologia mais te chama atenção?', 5),
-                (6, 'Como você lida com prazos apertados?', 6),
-                (7, 'Você prefere trabalhar:', 7),
-                (8, 'Qual dessas habilidades você mais se identifica?', 8),
-                (9, 'O que te motiva a aprender algo novo?', 9),
-                (10, 'Como você reage a mudanças tecnológicas?', 10)
-            ]
-            
-            for pergunta in perguntas:
-                cursor.execute(
-                    "INSERT INTO questionario (n_pergunta, descricao, ordem_exibicao) VALUES (%s, %s, %s)",
-                    pergunta
-                )
-            
-            # Inserir respostas
-            respostas = [
-                # Pergunta 1
-                (1, 1, 'Gosto de analisar cada detalhe e encontrar a solução lógica', 3, 2, 4, 3),
-                (1, 2, 'Busco soluções criativas e inovadoras', 2, 4, 2, 3),
-                (1, 3, 'Prefiro seguir um método testado e aprovado', 3, 2, 4, 2),
-                # Pergunta 2
-                (2, 1, 'Criar sites e aplicações web', 2, 5, 1, 2),
-                (2, 2, 'Trabalhar com banco de dados e relatórios', 3, 2, 2, 5),
-                (2, 3, 'Resolver problemas de hardware e software', 4, 1, 5, 1),
-                # Pergunta 3
-                (3, 1, 'Coordenar e organizar as tarefas do grupo', 3, 3, 3, 3),
-                (3, 2, 'Contribuir com ideias e soluções criativas', 2, 5, 2, 3),
-                (3, 3, 'Executar as tarefas com precisão', 4, 2, 5, 3),
-                # Pergunta 4
-                (4, 1, 'Entender como os computadores funcionam internamente', 5, 1, 4, 2),
-                (4, 2, 'Criar interfaces bonitas e funcionais', 2, 5, 1, 2),
-                (4, 3, 'Analisar padrões e tendências em dados', 3, 2, 2, 5),
-                # Pergunta 5
-                (5, 1, 'Desenvolvimento de software', 5, 3, 2, 2),
-                (5, 2, 'Design e experiência do usuário', 1, 5, 1, 1),
-                (5, 3, 'Infraestrutura e redes', 3, 1, 5, 2),
-                # Pergunta 6
-                (6, 1, 'Planejo cuidadosamente cada etapa', 4, 3, 4, 3),
-                (6, 2, 'Trabalho de forma intensa e focada', 3, 4, 3, 3),
-                (6, 3, 'Peço ajuda e delego quando necessário', 2, 3, 2, 3),
-                # Pergunta 7
-                (7, 1, 'Sozinho, no meu próprio ritmo', 4, 3, 4, 4),
-                (7, 2, 'Em equipe, colaborando com outros', 2, 4, 2, 3),
-                (7, 3, 'Híbrido, alternando conforme necessidade', 3, 3, 3, 3),
-                # Pergunta 8
-                (8, 1, 'Raciocínio lógico e matemático', 5, 2, 3, 4),
-                (8, 2, 'Criatividade e comunicação visual', 1, 5, 1, 2),
-                (8, 3, 'Atenção aos detalhes e organização', 3, 2, 5, 4),
-                # Pergunta 9
-                (9, 1, 'Resolver problemas do dia a dia', 4, 3, 5, 3),
-                (9, 2, 'Criar coisas novas e inovadoras', 3, 5, 2, 3),
-                (9, 3, 'Entender como as coisas funcionam', 5, 2, 4, 4),
-                # Pergunta 10
-                (10, 1, 'Fico animado e busco aprender imediatamente', 3, 5, 2, 3),
-                (10, 2, 'Analiso os prós e contras primeiro', 4, 2, 4, 4),
-                (10, 3, 'Prefiro esperar para ver se é confiável', 3, 1, 4, 2)
-            ]
-            
-            for resposta in respostas:
-                cursor.execute("""
-                    INSERT INTO respostas 
-                    (n_pergunta, n_resposta, resposta_01, peso_informatica, peso_web, peso_manutencao, peso_dados) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """, resposta)
-        
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
-        return jsonify({
-            "success": True, 
-            "message": "Tabelas criadas/verificadas com sucesso!",
-            "environment": os.environ.get('FLASK_ENV', 'development')
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
 # ==================== ROTAS PROTEGIDAS ====================
 
@@ -786,4 +692,5 @@ def meus_resultados():
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    print(f"🚀 Iniciando app na porta {port}")
     app.run(host='0.0.0.0', port=port, debug=debug)
