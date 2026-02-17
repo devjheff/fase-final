@@ -25,6 +25,9 @@
     {% endwith %}
 
     <form method="POST" action="{{ url_for('cadastro') }}">
+      <!-- CSRF Token - LINHA ADICIONADA AQUI -->
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      
       <div class="input-group">
         <label>Nome</label>
         <input type="text" name="nome" placeholder="Digite seu nome" required>
