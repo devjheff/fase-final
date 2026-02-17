@@ -25,12 +25,12 @@
     {% endwith %}
 
     <form method="POST" action="{{ url_for('login') }}">
-      <!-- CSRF Token - ADICIONE ESTA LINHA -->
+      <!-- CSRF Token - ADICIONADO AQUI -->
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       
       <div class="input-group">
         <label>Email</label>
-        <input type="email" name="email" placeholder="Digite Seu Email" required>
+        <input type="email" name="email" placeholder="Digite seu email" required>
       </div>
 
       <div class="input-group">
@@ -39,9 +39,9 @@
       </div>
 
       <button type="submit">Entrar</button>
-
+      
       <p class="switch">
-        Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastre-se</a>
+        Não tem conta? <a href="{{ url_for('cadastro') }}">Cadastrar</a>
       </p>
     </form>
   </div>
