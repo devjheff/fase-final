@@ -373,7 +373,19 @@
         };
         
         console.log('📊 Pontuação atual:', pontuacao);
-        updateNavigationButtons();
+        
+        // MELHORIA: Se for a última pergunta, já mostra o resultado
+        if (questionIndex === questions.length - 1) {
+            // Atualiza progresso para 100%
+            const progressPercent = 100;
+            document.getElementById('progressPercent').textContent = '100%';
+            document.getElementById('progressFill').style.width = '100%';
+            
+            // Mostra resultado imediatamente
+            showResults();
+        } else {
+            updateNavigationButtons();
+        }
     }
 
     // ==================== ATUALIZAR BOTÕES ====================
