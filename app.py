@@ -692,9 +692,10 @@ def logout():
 # ==================== ROTAS PROTEGIDAS ====================
 
 @app.route("/")
-@login_required
 def index():
-    return render_template("index.html")
+    if 'usuario_id' in session:
+        return render_template("index.html")  # logado
+    return render_template("index_publico.html")  # não logado
 
 @app.route("/questionario")
 @login_required
@@ -1056,3 +1057,4 @@ if __name__ == "__main__":
     app.logger.info(f"⏱️ Rate Limiting: Ativado")
     
     app.run(host='0.0.0.0', port=port, debug=debug)
+
