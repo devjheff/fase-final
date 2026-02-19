@@ -285,7 +285,7 @@
                 return;
             }
             
-            document.getElementById('progressCounter').textContent = `Pergunta 0 de ${questions.length}`;
+            document.getElementById('progressCounter').textContent = `Pergunta 1 de ${questions.length}`;
             document.getElementById('currentQuestionNumber').textContent = "1";
             
             loadQuestion(currentQuestionIndex);
@@ -397,13 +397,13 @@
         }
     }
 
-    // ==================== ATUALIZAR PROGRESSO - CORRIGIDO ====================
+    // ==================== ATUALIZAR PROGRESSO - CORRIGIDO (começa 0% termina 100%) ====================
     function updateProgress() {
-        // CORREÇÃO: calcular baseado em perguntas respondidas ÷ total
-        // Usamos currentQuestionIndex + 1 porque o índice começa em 0
-        const questionsAnswered = currentQuestionIndex + 1;
-        const progressPercent = (questionsAnswered / questions.length) * 100;
-        const progressCounter = `Pergunta ${questionsAnswered} de ${questions.length}`;
+        // Cálculo: (pergunta atual) / (total - 1) * 100
+        // Pergunta 1 (índice 0): (0/9)*100 = 0%
+        // Pergunta 10 (índice 9): (9/9)*100 = 100%
+        const progressPercent = (currentQuestionIndex / (questions.length - 1)) * 100;
+        const progressCounter = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
         
         document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
         document.getElementById('progressCounter').textContent = progressCounter;
@@ -624,7 +624,7 @@
         if (currentQuestionIndex < questions.length - 1) {
             currentQuestionIndex++;
             loadQuestion(currentQuestionIndex);
-            updateProgress(); // Atualiza o progresso ao avançar
+            updateProgress();
         }
     });
 
@@ -632,7 +632,7 @@
         if (currentQuestionIndex > 0) {
             currentQuestionIndex--;
             loadQuestion(currentQuestionIndex);
-            updateProgress(); // Atualiza o progresso ao voltar
+            updateProgress();
         }
     });
 
