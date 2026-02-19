@@ -694,7 +694,8 @@ def logout():
 @app.route("/")
 def index():
     if 'usuario_id' in session:
-        return render_template("index.html")  # logado
+        return render_template("index.html")  # USUÁRIO LOGADO → volta para esta página!
+    return render_template("index_publico.html")# logado
     
 @app.route("/questionario")
 @login_required
