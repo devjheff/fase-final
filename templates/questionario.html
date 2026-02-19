@@ -73,572 +73,575 @@
       </div>
     </div>
 
-<!-- Área da Pergunta -->
-<div class="question-card" id="questionCard">
-  <div class="question-number">
-    <i class="fas fa-question-circle"></i>
-    Pergunta <span id="currentQuestionNumber">1</span> de 10
-  </div>
-  
-  <div class="question-text" id="questionText"></div>
-  
-  <div class="options-container" id="optionsContainer"></div>
-  
-  <!-- ✅ BOTÕES DENTRO DA QUESTION-CARD (CORRETO) -->
-  <div class="navigation-buttons">
-    <button id="prevBtn" class="nav-btn btn-secondary" disabled>
-      <i class="fas fa-arrow-left"></i> Anterior
-    </button>
-    
-    <button id="nextBtn" class="nav-btn btn-primary" disabled>
-      Próxima <i class="fas fa-arrow-right"></i>
-    </button>
-    
-    <button id="submitBtn" class="nav-btn btn-success" style="display: none;">
-      <i class="fas fa-check-circle"></i> Ver Resultado
-    </button>
-  </div>
-</div> <!-- ✅ FIM CORRETO DA QUESTION-CARD -->
-
-<!-- Resultado Final -->
-<div class="result-container" id="resultContainer" style="display: none;">
-  <div class="result-card">
-    <div class="result-header">
-      <i class="fas fa-award"></i>
-      <h2>Sua Recomendação de Curso</h2>
-      <p class="result-subtitle">Baseado nas suas respostas sinceras, esta é a indicação mais adequada para você:</p>
-    </div>
-    
-    <div class="result-content">
-      <!-- Curso Recomendado -->
-      <div class="recommended-course" id="recommendedCourse">
-        <div class="course-icon" id="courseIcon">
-          <i class="fas fa-code"></i>
-        </div>
-        <div class="course-details">
-          <h3 id="courseName">Programação Web</h3>
-          <p id="courseDescription" class="course-description"></p>
-        </div>
+    <!-- Área da Pergunta -->
+    <div class="question-card" id="questionCard">
+      <div class="question-number">
+        <i class="fas fa-question-circle"></i>
+        Pergunta <span id="currentQuestionNumber">1</span> de 10
       </div>
       
-      <!-- Pontuação Detalhada -->
-      <div class="score-details">
-        <h4><i class="fas fa-chart-bar"></i> Pontuação por Área</h4>
-        <div class="score-bars">
-          <div class="score-bar">
-            <div class="score-label">
-              <i class="fas fa-desktop"></i> Informática Básica
+      <div class="question-text" id="questionText"></div>
+      
+      <div class="options-container" id="optionsContainer"></div>
+      
+      <!-- BOTÕES DE NAVEGAÇÃO -->
+      <div class="navigation-buttons">
+        <button id="prevBtn" class="nav-btn btn-secondary" disabled>
+          <i class="fas fa-arrow-left"></i> Anterior
+        </button>
+        
+        <button id="nextBtn" class="nav-btn btn-primary" disabled>
+          Próxima <i class="fas fa-arrow-right"></i>
+        </button>
+        
+        <button id="submitBtn" class="nav-btn btn-success" style="display: none;">
+          <i class="fas fa-check-circle"></i> Ver Resultado
+        </button>
+      </div>
+    </div>
+
+    <!-- Resultado Final -->
+    <div class="result-container" id="resultContainer" style="display: none;">
+      <div class="result-card">
+        <div class="result-header">
+          <i class="fas fa-award"></i>
+          <h2>Sua Recomendação de Curso</h2>
+          <p class="result-subtitle">Baseado nas suas respostas sinceras, esta é a indicação mais adequada para você:</p>
+        </div>
+        
+        <div class="result-content">
+          <!-- Curso Recomendado -->
+          <div class="recommended-course" id="recommendedCourse">
+            <div class="course-icon" id="courseIcon">
+              <i class="fas fa-code"></i>
             </div>
-            <div class="score-value-container">
-              <div class="score-bar-track">
-                <div class="score-bar-fill" id="scoreInformatica" style="width: 0%; background: #4e54c8;"></div>
-              </div>
-              <span class="score-points" id="pointsInformatica">0</span>
+            <div class="course-details">
+              <h3 id="courseName">Programação Web</h3>
+              <p id="courseDescription" class="course-description"></p>
             </div>
           </div>
           
-          <div class="score-bar">
-            <div class="score-label">
-              <i class="fas fa-code"></i> Programação Web
-            </div>
-            <div class="score-value-container">
-              <div class="score-bar-track">
-                <div class="score-bar-fill" id="scoreWeb" style="width: 0%; background: #8f94fb;"></div>
+          <!-- Pontuação Detalhada -->
+          <div class="score-details">
+            <h4><i class="fas fa-chart-bar"></i> Pontuação por Área</h4>
+            <div class="score-bars">
+              <div class="score-bar">
+                <div class="score-label">
+                  <i class="fas fa-desktop"></i> Informática Básica
+                </div>
+                <div class="score-value-container">
+                  <div class="score-bar-track">
+                    <div class="score-bar-fill" id="scoreInformatica" style="width: 0%; background: #4e54c8;"></div>
+                  </div>
+                  <span class="score-points" id="pointsInformatica">0</span>
+                </div>
               </div>
-              <span class="score-points" id="pointsWeb">0</span>
+              
+              <div class="score-bar">
+                <div class="score-label">
+                  <i class="fas fa-code"></i> Programação Web
+                </div>
+                <div class="score-value-container">
+                  <div class="score-bar-track">
+                    <div class="score-bar-fill" id="scoreWeb" style="width: 0%; background: #8f94fb;"></div>
+                  </div>
+                  <span class="score-points" id="pointsWeb">0</span>
+                </div>
+              </div>
+              
+              <div class="score-bar">
+                <div class="score-label">
+                  <i class="fas fa-tools"></i> Manutenção de Micros
+                </div>
+                <div class="score-value-container">
+                  <div class="score-bar-track">
+                    <div class="score-bar-fill" id="scoreManutencao" style="width: 0%; background: #3498db;"></div>
+                  </div>
+                  <span class="score-points" id="pointsManutencao">0</span>
+                </div>
+              </div>
+              
+              <div class="score-bar">
+                <div class="score-label">
+                  <i class="fas fa-database"></i> Banco de Dados
+                </div>
+                <div class="score-value-container">
+                  <div class="score-bar-track">
+                    <div class="score-bar-fill" id="scoreDados" style="width: 0%; background: #2ecc71;"></div>
+                  </div>
+                  <span class="score-points" id="pointsDados">0</span>
+                </div>
+              </div>
             </div>
           </div>
           
-          <div class="score-bar">
-            <div class="score-label">
-              <i class="fas fa-tools"></i> Manutenção de Micros
-            </div>
-            <div class="score-value-container">
-              <div class="score-bar-track">
-                <div class="score-bar-fill" id="scoreManutencao" style="width: 0%; background: #3498db;"></div>
-              </div>
-              <span class="score-points" id="pointsManutencao">0</span>
-            </div>
-          </div>
-          
-          <div class="score-bar">
-            <div class="score-label">
-              <i class="fas fa-database"></i> Banco de Dados
-            </div>
-            <div class="score-value-container">
-              <div class="score-bar-track">
-                <div class="score-bar-fill" id="scoreDados" style="width: 0%; background: #2ecc71;"></div>
-              </div>
-              <span class="score-points" id="pointsDados">0</span>
+          <!-- Mensagem Personalizada -->
+          <div class="personal-message" id="personalMessage">
+            <div>
+              <h4>🌟 Resultado da Orientação</h4>
+              <div id="messageText"></div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- Mensagem Personalizada -->
-      <div class="personal-message" id="personalMessage">
-        <div>
-          <h4>🌟 Resultado da Orientação</h4>
-          <div id="messageText"></div>
+        
+        <div class="result-actions">
+          <button id="restartBtn" class="btnn btn-primary">
+            <i class="fas fa-redo"></i> Refazer Questionário
+          </button>
         </div>
       </div>
     </div>
-    
-    <div class="result-actions">
-      <button id="restartBtn" class="btnn btn-primary">
-        <i class="fas fa-redo"></i> Refazer Questionário
+
+    <div class="back-container">
+      <a href="/" class="btnn linkmenuprincipal">
+        <i class="fas fa-arrow-left"></i> Voltar para a tela inicial
+      </a>
     </div>
   </div>
-</div>
 
-<div class="back-container">
-  <a href="/" class="btnn linkmenuprincipal">
-    <i class="fas fa-arrow-left"></i> Voltar para a tela inicial
-  </a>
-</div>
-</div>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p class="footer-text">
+        <center>
+          <img src="{{ url_for('static', filename='imgs/logobranca.png') }}" alt="Logo SQW" class="footer-logo">
+        </center>
+        <br>
+        © 2026 Turma 2025.2.235 Programação Web - SENAC • Todos os direitos reservados
+      </p>
+    </div>
+  </footer>
 
-<!-- Footer -->
-<footer class="footer">
-<div class="footer-bottom">
-  <p class="footer-text">
-    <center>
-      <img src="{{ url_for('static', filename='imgs/logobranca.png') }}" alt="Logo SQW" class="footer-logo">
-    </center>
-    <br>
-    © 2026 Turma 2025.2.235 Programação Web - SENAC • Todos os direitos reservados
-  </p>
-</div>
-</footer>
-
-<script>
-// ==================== CONFIGURAÇÕES DOS CURSOS ====================
-const cursosInfo = {
-    informatica: {
-        nome: "Informática Básica",
-        descricao: "Ideal para quem está começando e precisa desenvolver habilidades fundamentais com computadores, internet e ferramentas básicas de produtividade.",
-        icone: "fa-desktop",
-        cor: "#4e54c8",
-        pontosMaximos: 2
-    },
-    web: {
-        nome: "Programação Web",
-        descricao: "Para quem tem interesse em criar sites e aplicações web, aprender lógica de programação e desenvolver soluções digitais.",
-        icone: "fa-code",
-        cor: "#8f94fb",
-        pontosMaximos: 16
-    },
-    manutencao: {
-        nome: "Manutenção de Micros",
-        descricao: "Perfeito para quem gosta de atividades práticas, montagem e manutenção de hardware, solução de problemas técnicos.",
-        icone: "fa-tools",
-        cor: "#3498db",
-        pontosMaximos: 10
-    },
-    dados: {
-        nome: "Banco de Dados",
-        descricao: "Indicado para quem se interessa por organização de informações, análise de dados e estruturação de sistemas de armazenamento.",
-        icone: "fa-database",
-        cor: "#2ecc71",
-        pontosMaximos: 14
-    }
-};
-
-// ==================== PONTUAÇÕES MÁXIMAS ====================
-const pontuacaoMaxima = {
-    informatica: 2,
-    web: 16,
-    manutencao: 10,
-    dados: 14
-};
-
-// ==================== VARIÁVEIS GLOBAIS ====================
-let questions = [];
-let currentQuestionIndex = 0;
-let userAnswers = [];
-let pontuacao = {
-    informatica: 0,
-    web: 0,
-    manutencao: 0,
-    dados: 0
-};
-let selectedOption = null;
-
-// ==================== CARREGAR PERGUNTAS ====================
-async function carregarPerguntas() {
-    try {
-        const response = await fetch('/api/perguntas');
-        if (!response.ok) throw new Error('Erro ao carregar perguntas');
-        
-        const perguntasDoBanco = await response.json();
-        console.log('✅ Perguntas carregadas:', perguntasDoBanco.length);
-        
-        questions = perguntasDoBanco.map(item => ({
-            id: item.n_pergunta,
-            question: item.descricao,
-            options: item.opcoes
-        }));
-        
-        if (questions.length === 0) {
-            alert('Nenhuma pergunta encontrada no banco de dados.');
-            return;
-        }
-        
-        document.getElementById('progressCounter').textContent = `Pergunta 0 de ${questions.length}`;
-        document.getElementById('currentQuestionNumber').textContent = "1";
-        
-        loadQuestion(currentQuestionIndex);
-        updateProgress();
-        
-    } catch (error) {
-        console.error('❌ Erro ao carregar perguntas:', error);
-        alert('Erro ao carregar o questionário. Por favor, tente novamente.');
-    }
-}
-
-// ==================== CARREGAR PERGUNTA ====================
-function loadQuestion(index) {
-    const question = questions[index];
-    const questionCard = document.getElementById('questionCard');
-    
-    questionCard.classList.remove('fade-in');
-    
-    document.getElementById('currentQuestionNumber').textContent = index + 1;
-    document.getElementById('questionText').textContent = question.question;
-    
-    const optionsContainer = document.getElementById('optionsContainer');
-    optionsContainer.innerHTML = '';
-    
-    question.options.forEach(option => {
-        const optionElement = document.createElement('button');
-        optionElement.className = 'option-btn';
-        optionElement.innerHTML = `
-            <span class="option-letter">${option.id}</span>
-            <span class="option-text">${option.text}</span>
-        `;
-        optionElement.dataset.optionId = option.id;
-        
-        const userAnswer = userAnswers[index];
-        if (userAnswer && userAnswer.optionId === option.id) {
-            optionElement.classList.add('selected');
-        }
-        
-        optionElement.addEventListener('click', () => selectOption(optionElement, option, index));
-        optionsContainer.appendChild(optionElement);
-    });
-    
-    updateNavigationButtons();
-    
-    setTimeout(() => {
-        questionCard.classList.add('fade-in');
-    }, 10);
-}
-
-// ==================== SELECIONAR OPÇÃO ====================
-function selectOption(optionElement, option, questionIndex) {
-    document.querySelectorAll('.option-btn').forEach(btn => {
-        btn.classList.remove('selected');
-    });
-    
-    optionElement.classList.add('selected');
-    selectedOption = option;
-    
-    // REMOVER pontos da resposta anterior
-    const respostaAnterior = userAnswers[questionIndex];
-    if (respostaAnterior && respostaAnterior.points) {
-        const pontosAnteriores = respostaAnterior.points;
-        pontuacao.informatica -= pontosAnteriores.informatica || 0;
-        pontuacao.web -= pontosAnteriores.web || 0;
-        pontuacao.manutencao -= pontosAnteriores.manutencao || 0;
-        pontuacao.dados -= pontosAnteriores.dados || 0;
-    }
-    
-    // ADICIONAR novos pontos
-    pontuacao.informatica += option.informatica || 0;
-    pontuacao.web += option.web || 0;
-    pontuacao.manutencao += option.manutencao || 0;
-    pontuacao.dados += option.dados || 0;
-    
-    // REGISTRAR resposta
-    userAnswers[questionIndex] = {
-        questionId: questions[questionIndex].id,
-        optionId: option.id,
-        points: {
-            informatica: option.informatica || 0,
-            web: option.web || 0,
-            manutencao: option.manutencao || 0,
-            dados: option.dados || 0
+  <script>
+    // ==================== CONFIGURAÇÕES DOS CURSOS ====================
+    const cursosInfo = {
+        informatica: {
+            nome: "Informática Básica",
+            descricao: "Ideal para quem está começando e precisa desenvolver habilidades fundamentais com computadores, internet e ferramentas básicas de produtividade.",
+            icone: "fa-desktop",
+            cor: "#4e54c8",
+            pontosMaximos: 2
+        },
+        web: {
+            nome: "Programação Web",
+            descricao: "Para quem tem interesse em criar sites e aplicações web, aprender lógica de programação e desenvolver soluções digitais.",
+            icone: "fa-code",
+            cor: "#8f94fb",
+            pontosMaximos: 16
+        },
+        manutencao: {
+            nome: "Manutenção de Micros",
+            descricao: "Perfeito para quem gosta de atividades práticas, montagem e manutenção de hardware, solução de problemas técnicos.",
+            icone: "fa-tools",
+            cor: "#3498db",
+            pontosMaximos: 10
+        },
+        dados: {
+            nome: "Banco de Dados",
+            descricao: "Indicado para quem se interessa por organização de informações, análise de dados e estruturação de sistemas de armazenamento.",
+            icone: "fa-database",
+            cor: "#2ecc71",
+            pontosMaximos: 14
         }
     };
-    
-    console.log('📊 Pontuação atual:', pontuacao);
-    updateNavigationButtons();
-}
 
-// ==================== ATUALIZAR BOTÕES ====================
-function updateNavigationButtons() {
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    
-    prevBtn.disabled = currentQuestionIndex === 0;
-    
-    const hasAnswered = userAnswers[currentQuestionIndex] !== undefined;
-    
-    if (currentQuestionIndex === questions.length - 1 && hasAnswered) {
-        nextBtn.style.display = 'none';
-        submitBtn.style.display = 'flex';
-        submitBtn.disabled = false;
-    } else {
-        nextBtn.style.display = 'flex';
-        submitBtn.style.display = 'none';
-        nextBtn.disabled = !hasAnswered;
-    }
-}
+    // ==================== PONTUAÇÕES MÁXIMAS ====================
+    const pontuacaoMaxima = {
+        informatica: 2,
+        web: 16,
+        manutencao: 10,
+        dados: 14
+    };
 
-// ==================== ATUALIZAR PROGRESSO ====================
-function updateProgress() {
-    const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
-    const progressCounter = `Pergunta ${currentQuestionIndex + 1} de ${questions.length}`;
-    
-    document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
-    document.getElementById('progressCounter').textContent = progressCounter;
-    document.getElementById('progressFill').style.width = `${progressPercent}%`;
-}
+    // ==================== VARIÁVEIS GLOBAIS ====================
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let pontuacao = {
+        informatica: 0,
+        web: 0,
+        manutencao: 0,
+        dados: 0
+    };
+    let selectedOption = null;
 
-// ==================== MOSTRAR RESULTADOS ====================
-// ==================== MOSTRAR RESULTADOS ====================
-// ==================== MOSTRAR RESULTADOS - VERSÃO MOBILE CORRIGIDA ====================
-async function showResults() {
-    // Encontrar curso com maior pontuação
-    let maxPontos = 0;
-    let cursoRecomendado = 'web';
-    
-    for (const [curso, pontos] of Object.entries(pontuacao)) {
-        if (pontos > maxPontos) {
-            maxPontos = pontos;
-            cursoRecomendado = curso;
+    // ==================== CARREGAR PERGUNTAS ====================
+    async function carregarPerguntas() {
+        try {
+            const response = await fetch('/api/perguntas');
+            if (!response.ok) throw new Error('Erro ao carregar perguntas');
+            
+            const perguntasDoBanco = await response.json();
+            console.log('✅ Perguntas carregadas:', perguntasDoBanco.length);
+            
+            questions = perguntasDoBanco.map(item => ({
+                id: item.n_pergunta,
+                question: item.descricao,
+                options: item.opcoes
+            }));
+            
+            if (questions.length === 0) {
+                alert('Nenhuma pergunta encontrada no banco de dados.');
+                return;
+            }
+            
+            document.getElementById('progressCounter').textContent = `Pergunta 0 de ${questions.length}`;
+            document.getElementById('currentQuestionNumber').textContent = "1";
+            
+            loadQuestion(currentQuestionIndex);
+            updateProgress();
+            
+        } catch (error) {
+            console.error('❌ Erro ao carregar perguntas:', error);
+            alert('Erro ao carregar o questionário. Por favor, tente novamente.');
         }
     }
-    
-    const cursoInfo = cursosInfo[cursoRecomendado];
-    
-    // Atualizar informações do curso recomendado
-    document.getElementById('courseName').textContent = cursoInfo.nome;
-    document.getElementById('courseDescription').textContent = cursoInfo.descricao;
-    document.getElementById('courseIcon').innerHTML = `<i class="fas ${cursoInfo.icone}"></i>`;
-    document.querySelector('.recommended-course').style.borderLeftColor = cursoInfo.cor;
-    
-    // Atualizar pontuações
-    document.getElementById('pointsInformatica').textContent = pontuacao.informatica;
-    document.getElementById('pointsWeb').textContent = pontuacao.web;
-    document.getElementById('pointsManutencao').textContent = pontuacao.manutencao;
-    document.getElementById('pointsDados').textContent = pontuacao.dados;
-    
-    // Calcular percentuais para as barras
-    const maxScore = Math.max(...Object.values(pontuacao)) || 1;
-    
-    document.getElementById('scoreInformatica').style.width = `${(pontuacao.informatica / maxScore) * 100}%`;
-    document.getElementById('scoreWeb').style.width = `${(pontuacao.web / maxScore) * 100}%`;
-    document.getElementById('scoreManutencao').style.width = `${(pontuacao.manutencao / maxScore) * 100}%`;
-    document.getElementById('scoreDados').style.width = `${(pontuacao.dados / maxScore) * 100}%`;
-    
-    // ========== MENSAGEM CORRIGIDA - 100% RESPONSIVA PARA MOBILE ==========
-    const messageText = document.getElementById('messageText');
-    
-    let mensagem = `
-        <div style="background: #ffffff; padding: 20px; border-radius: 15px; border-left: 8px solid ${cursoInfo.cor}; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: hidden;">
+
+    // ==================== CARREGAR PERGUNTA ====================
+    function loadQuestion(index) {
+        const question = questions[index];
+        const questionCard = document.getElementById('questionCard');
+        
+        questionCard.classList.remove('fade-in');
+        
+        document.getElementById('currentQuestionNumber').textContent = index + 1;
+        document.getElementById('questionText').textContent = question.question;
+        
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        
+        question.options.forEach(option => {
+            const optionElement = document.createElement('button');
+            optionElement.className = 'option-btn';
+            optionElement.innerHTML = `
+                <span class="option-letter">${option.id}</span>
+                <span class="option-text">${option.text}</span>
+            `;
+            optionElement.dataset.optionId = option.id;
             
-            <!-- TÍTULO -->
-            <p style="font-size: 1.3rem; margin-bottom: 20px; color: #1a1a2c; font-weight: 700; border-bottom: 3px solid #e9ecef; padding-bottom: 12px; word-break: break-word;">
-                <i class="fas fa-clipboard-list" style="color: ${cursoInfo.cor};"></i> 
-                Resultado da orientação
-            </p>
+            const userAnswer = userAnswers[index];
+            if (userAnswer && userAnswer.optionId === option.id) {
+                optionElement.classList.add('selected');
+            }
             
-            <!-- PONTUAÇÕES -->
-            <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
-                <p style="margin: 0 0 15px 0; color: #0f172a; font-weight: 700; font-size: 1.1rem;">
-                    <i class="fas fa-chart-bar" style="color: #4e54c8;"></i> 
-                    Pontuação por área:
+            optionElement.addEventListener('click', () => selectOption(optionElement, option, index));
+            optionsContainer.appendChild(optionElement);
+        });
+        
+        updateNavigationButtons();
+        
+        setTimeout(() => {
+            questionCard.classList.add('fade-in');
+        }, 10);
+    }
+
+    // ==================== SELECIONAR OPÇÃO ====================
+    function selectOption(optionElement, option, questionIndex) {
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+        
+        optionElement.classList.add('selected');
+        selectedOption = option;
+        
+        // REMOVER pontos da resposta anterior
+        const respostaAnterior = userAnswers[questionIndex];
+        if (respostaAnterior && respostaAnterior.points) {
+            const pontosAnteriores = respostaAnterior.points;
+            pontuacao.informatica -= pontosAnteriores.informatica || 0;
+            pontuacao.web -= pontosAnteriores.web || 0;
+            pontuacao.manutencao -= pontosAnteriores.manutencao || 0;
+            pontuacao.dados -= pontosAnteriores.dados || 0;
+        }
+        
+        // ADICIONAR novos pontos
+        pontuacao.informatica += option.informatica || 0;
+        pontuacao.web += option.web || 0;
+        pontuacao.manutencao += option.manutencao || 0;
+        pontuacao.dados += option.dados || 0;
+        
+        // REGISTRAR resposta
+        userAnswers[questionIndex] = {
+            questionId: questions[questionIndex].id,
+            optionId: option.id,
+            points: {
+                informatica: option.informatica || 0,
+                web: option.web || 0,
+                manutencao: option.manutencao || 0,
+                dados: option.dados || 0
+            }
+        };
+        
+        console.log('📊 Pontuação atual:', pontuacao);
+        updateNavigationButtons();
+    }
+
+    // ==================== ATUALIZAR BOTÕES ====================
+    function updateNavigationButtons() {
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.disabled = currentQuestionIndex === 0;
+        
+        const hasAnswered = userAnswers[currentQuestionIndex] !== undefined;
+        
+        if (currentQuestionIndex === questions.length - 1 && hasAnswered) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'flex';
+            submitBtn.disabled = false;
+        } else {
+            nextBtn.style.display = 'flex';
+            submitBtn.style.display = 'none';
+            nextBtn.disabled = !hasAnswered;
+        }
+    }
+
+    // ==================== ATUALIZAR PROGRESSO - CORRIGIDO ====================
+    function updateProgress() {
+        // CORREÇÃO: calcular baseado em perguntas respondidas ÷ total
+        // Usamos currentQuestionIndex + 1 porque o índice começa em 0
+        const questionsAnswered = currentQuestionIndex + 1;
+        const progressPercent = (questionsAnswered / questions.length) * 100;
+        const progressCounter = `Pergunta ${questionsAnswered} de ${questions.length}`;
+        
+        document.getElementById('progressPercent').textContent = `${Math.round(progressPercent)}%`;
+        document.getElementById('progressCounter').textContent = progressCounter;
+        document.getElementById('progressFill').style.width = `${progressPercent}%`;
+    }
+
+    // ==================== MOSTRAR RESULTADOS ====================
+    async function showResults() {
+        // Encontrar curso com maior pontuação
+        let maxPontos = 0;
+        let cursoRecomendado = 'web';
+        
+        for (const [curso, pontos] of Object.entries(pontuacao)) {
+            if (pontos > maxPontos) {
+                maxPontos = pontos;
+                cursoRecomendado = curso;
+            }
+        }
+        
+        const cursoInfo = cursosInfo[cursoRecomendado];
+        
+        // Atualizar informações do curso recomendado
+        document.getElementById('courseName').textContent = cursoInfo.nome;
+        document.getElementById('courseDescription').textContent = cursoInfo.descricao;
+        document.getElementById('courseIcon').innerHTML = `<i class="fas ${cursoInfo.icone}"></i>`;
+        document.querySelector('.recommended-course').style.borderLeftColor = cursoInfo.cor;
+        
+        // Atualizar pontuações
+        document.getElementById('pointsInformatica').textContent = pontuacao.informatica;
+        document.getElementById('pointsWeb').textContent = pontuacao.web;
+        document.getElementById('pointsManutencao').textContent = pontuacao.manutencao;
+        document.getElementById('pointsDados').textContent = pontuacao.dados;
+        
+        // Calcular percentuais para as barras
+        const maxScore = Math.max(...Object.values(pontuacao)) || 1;
+        
+        document.getElementById('scoreInformatica').style.width = `${(pontuacao.informatica / maxScore) * 100}%`;
+        document.getElementById('scoreWeb').style.width = `${(pontuacao.web / maxScore) * 100}%`;
+        document.getElementById('scoreManutencao').style.width = `${(pontuacao.manutencao / maxScore) * 100}%`;
+        document.getElementById('scoreDados').style.width = `${(pontuacao.dados / maxScore) * 100}%`;
+        
+        // Mensagem personalizada
+        const messageText = document.getElementById('messageText');
+        
+        let mensagem = `
+            <div style="background: #ffffff; padding: 20px; border-radius: 15px; border-left: 8px solid ${cursoInfo.cor}; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: hidden;">
+                
+                <!-- TÍTULO -->
+                <p style="font-size: 1.3rem; margin-bottom: 20px; color: #1a1a2c; font-weight: 700; border-bottom: 3px solid #e9ecef; padding-bottom: 12px; word-break: break-word;">
+                    <i class="fas fa-clipboard-list" style="color: ${cursoInfo.cor};"></i> 
+                    Resultado da orientação
                 </p>
                 
-                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
-                    <!-- WEB -->
-                    <div style="display: flex; flex-direction: column; background: #f1f5f9; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 1.3rem;">🌐</span>
-                            <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Programação Web</span>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <span style="background: #8f94fb; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
-                                ${pontuacao.web} pts
-                            </span>
-                        </div>
-                    </div>
+                <!-- PONTUAÇÕES -->
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; width: 100%; box-sizing: border-box;">
+                    <p style="margin: 0 0 15px 0; color: #0f172a; font-weight: 700; font-size: 1.1rem;">
+                        <i class="fas fa-chart-bar" style="color: #4e54c8;"></i> 
+                        Pontuação por área:
+                    </p>
                     
-                    <!-- DADOS -->
-                    <div style="display: flex; flex-direction: column; background: #f0fdf4; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 1.3rem;">🗄️</span>
-                            <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Banco de Dados</span>
+                    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+                        <!-- WEB -->
+                        <div style="display: flex; flex-direction: column; background: #f1f5f9; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 1.3rem;">🌐</span>
+                                <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Programação Web</span>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <span style="background: #8f94fb; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
+                                    ${pontuacao.web} pts
+                                </span>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <span style="background: #2ecc71; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
-                                ${pontuacao.dados} pts
-                            </span>
+                        
+                        <!-- DADOS -->
+                        <div style="display: flex; flex-direction: column; background: #f0fdf4; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 1.3rem;">🗄️</span>
+                                <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Banco de Dados</span>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <span style="background: #2ecc71; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
+                                    ${pontuacao.dados} pts
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- MANUTENÇÃO -->
-                    <div style="display: flex; flex-direction: column; background: #fff7ed; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 1.3rem;">🔧</span>
-                            <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Manutenção de Micros</span>
+                        
+                        <!-- MANUTENÇÃO -->
+                        <div style="display: flex; flex-direction: column; background: #fff7ed; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 1.3rem;">🔧</span>
+                                <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Manutenção de Micros</span>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <span style="background: #3498db; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
+                                    ${pontuacao.manutencao} pts
+                                </span>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <span style="background: #3498db; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
-                                ${pontuacao.manutencao} pts
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <!-- INFORMÁTICA -->
-                    <div style="display: flex; flex-direction: column; background: #eef2ff; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 1.3rem;">💻</span>
-                            <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Informática Básica</span>
-                        </div>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <span style="background: #4e54c8; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
-                                ${pontuacao.informatica} pts
-                            </span>
+                        
+                        <!-- INFORMÁTICA -->
+                        <div style="display: flex; flex-direction: column; background: #eef2ff; padding: 12px; border-radius: 10px; width: 100%; box-sizing: border-box;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 1.3rem;">💻</span>
+                                <span style="font-weight: 600; color: #0f172a; font-size: 1rem; flex: 1; word-break: break-word;">Informática Básica</span>
+                            </div>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <span style="background: #4e54c8; color: white; font-weight: 700; padding: 5px 15px; border-radius: 50px; font-size: 1rem; display: inline-block;">
+                                    ${pontuacao.informatica} pts
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- CURSO RECOMENDADO -->
-            <div style="background: linear-gradient(135deg, ${cursoInfo.cor}, ${cursoInfo.cor}dd); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 8px 15px ${cursoInfo.cor}40; width: 100%; box-sizing: border-box;">
-                <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;">
-                    <div style="background: rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-                        <i class="fas ${cursoInfo.icone}" style="font-size: 30px; color: white;"></i>
-                    </div>
-                    <div style="width: 100%;">
-                        <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Curso Recomendado</p>
-                        <p style="margin: 5px 0 0 0; color: white; font-size: 1.5rem; font-weight: 700; word-break: break-word;">${cursoInfo.nome}</p>
-                        <p style="margin: 5px 0 0 0; color: white; font-size: 1rem; opacity: 0.95;">
-                            ${maxPontos} pontos • ${Math.round((maxPontos / cursoInfo.pontosMaximos) * 100)}% afinidade
-                        </p>
+                
+                <!-- CURSO RECOMENDADO -->
+                <div style="background: linear-gradient(135deg, ${cursoInfo.cor}, ${cursoInfo.cor}dd); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 8px 15px ${cursoInfo.cor}40; width: 100%; box-sizing: border-box;">
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;">
+                        <div style="background: rgba(255,255,255,0.2); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+                            <i class="fas ${cursoInfo.icone}" style="font-size: 30px; color: white;"></i>
+                        </div>
+                        <div style="width: 100%;">
+                            <p style="margin: 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Curso Recomendado</p>
+                            <p style="margin: 5px 0 0 0; color: white; font-size: 1.5rem; font-weight: 700; word-break: break-word;">${cursoInfo.nome}</p>
+                            <p style="margin: 5px 0 0 0; color: white; font-size: 1rem; opacity: 0.95;">
+                                ${maxPontos} pontos • ${Math.round((maxPontos / cursoInfo.pontosMaximos) * 100)}% afinidade
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- MENSAGEM DE ORIENTAÇÃO -->
-            <div style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e9ecef; width: 100%; box-sizing: border-box;">
-                <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px;">
-                    <div style="background: ${cursoInfo.cor}15; padding: 12px; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-smile" style="font-size: 25px; color: ${cursoInfo.cor};"></i>
+                
+                <!-- MENSAGEM DE ORIENTAÇÃO -->
+                <div style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid #e9ecef; width: 100%; box-sizing: border-box;">
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px;">
+                        <div style="background: ${cursoInfo.cor}15; padding: 12px; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-smile" style="font-size: 25px; color: ${cursoInfo.cor};"></i>
+                        </div>
+                        <div style="width: 100%;">
+                            <p style="margin: 0 0 8px 0; color: #0f172a; font-size: 1.1rem; font-weight: 600; word-break: break-word;">
+                                Essa recomendação considera seu perfil atual e seus interesses.
+                            </p>
+                            <p style="margin: 0 0 8px 0; color: #334155; font-size: 1rem; word-break: break-word;">
+                                <i class="fas fa-rocket" style="color: ${cursoInfo.cor}; margin-right: 5px;"></i>
+                                Você pode evoluir para outros cursos futuramente.
+                            </p>
+                            <div style="background: ${cursoInfo.cor}10; padding: 12px; border-radius: 10px; margin-top: 10px;">
+                                <p style="margin: 0; color: ${cursoInfo.cor}; font-size: 1.1rem; font-weight: 700; text-align: center;">
+                                    ⭐ Obrigado por participar! 🚀
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div style="width: 100%;">
-                        <p style="margin: 0 0 8px 0; color: #0f172a; font-size: 1.1rem; font-weight: 600; word-break: break-word;">
-                            Essa recomendação considera seu perfil atual e seus interesses.
-                        </p>
-                        <p style="margin: 0 0 8px 0; color: #334155; font-size: 1rem; word-break: break-word;">
-                            <i class="fas fa-rocket" style="color: ${cursoInfo.cor}; margin-right: 5px;"></i>
-                            Você pode evoluir para outros cursos futuramente.
-                        </p>
-                        <div style="background: ${cursoInfo.cor}10; padding: 12px; border-radius: 10px; margin-top: 10px;">
-                            <p style="margin: 0; color: ${cursoInfo.cor}; font-size: 1.1rem; font-weight: 700; text-align: center;">
-                                ⭐ Obrigado por participar! 🚀
+                </div>
+                
+                <!-- DICA -->
+                <div style="margin-top: 20px; padding: 15px; background: #fff9e6; border-radius: 10px; border-left: 5px solid #f59e0b; width: 100%; box-sizing: border-box;">
+                    <div style="display: flex; gap: 12px; align-items: flex-start;">
+                        <i class="fas fa-lightbulb" style="font-size: 24px; color: #f59e0b; flex-shrink: 0;"></i>
+                        <div style="flex: 1;">
+                            <p style="margin: 0; color: #92400e; font-weight: 700; font-size: 1rem;">Dica importante:</p>
+                            <p style="margin: 5px 0 0 0; color: #78350f; font-size: 0.95rem; word-break: break-word;">
+                                Não existem respostas certas ou erradas. O importante é começar sua jornada na tecnologia!
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- DICA -->
-            <div style="margin-top: 20px; padding: 15px; background: #fff9e6; border-radius: 10px; border-left: 5px solid #f59e0b; width: 100%; box-sizing: border-box;">
-                <div style="display: flex; gap: 12px; align-items: flex-start;">
-                    <i class="fas fa-lightbulb" style="font-size: 24px; color: #f59e0b; flex-shrink: 0;"></i>
-                    <div style="flex: 1;">
-                        <p style="margin: 0; color: #92400e; font-weight: 700; font-size: 1rem;">Dica importante:</p>
-                        <p style="margin: 5px 0 0 0; color: #78350f; font-size: 0.95rem; word-break: break-word;">
-                            Não existem respostas certas ou erradas. O importante é começar sua jornada na tecnologia!
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    messageText.innerHTML = mensagem;
-    
-    // Salvar resultado
-    try {
-        await fetch('/api/salvar-resultado', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                pontuacao: pontuacao,
-                curso_recomendado: cursoInfo.nome,
-                data: new Date().toISOString()
-            })
-        });
-    } catch (error) {
-        console.error('Erro ao salvar resultado:', error);
+        `;
+        
+        messageText.innerHTML = mensagem;
+        
+        // Salvar resultado
+        try {
+            await fetch('/api/salvar-resultado', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    informatica: pontuacao.informatica,
+                    web: pontuacao.web,
+                    manutencao: pontuacao.manutencao,
+                    dados: pontuacao.dados,
+                    curso_recomendado: cursoInfo.nome
+                })
+            });
+        } catch (error) {
+            console.error('Erro ao salvar resultado:', error);
+        }
+        
+        // Mostrar resultados
+        document.getElementById('questionCard').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+        document.getElementById('prevBtn').style.display = 'none';
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('resultContainer').style.display = 'block';
     }
-    
-    // Mostrar resultados
-    document.getElementById('questionCard').style.display = 'none';
-    document.getElementById('nextBtn').style.display = 'none';
-    document.getElementById('prevBtn').style.display = 'none';
-    document.getElementById('submitBtn').style.display = 'none';
-    document.getElementById('resultContainer').style.display = 'block';
-}
 
-// ==================== REINICIAR QUESTIONÁRIO ====================
-function restartQuestionario() {
-    currentQuestionIndex = 0;
-    userAnswers = [];
-    pontuacao = { informatica: 0, web: 0, manutencao: 0, dados: 0 };
-    selectedOption = null;
-    
-    document.getElementById('questionCard').style.display = 'block';
-    document.getElementById('resultContainer').style.display = 'none';
-    document.getElementById('nextBtn').style.display = 'flex';
-    document.getElementById('prevBtn').style.display = 'flex';
-    document.getElementById('submitBtn').style.display = 'none';
-    
-    loadQuestion(currentQuestionIndex);
-    updateProgress();
-}
-
-// ==================== EVENT LISTENERS ====================
-document.addEventListener('DOMContentLoaded', carregarPerguntas);
-
-document.getElementById('nextBtn').addEventListener('click', function() {
-    if (currentQuestionIndex < questions.length - 1) {
-        currentQuestionIndex++;
+    // ==================== REINICIAR QUESTIONÁRIO ====================
+    function restartQuestionario() {
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        pontuacao = { informatica: 0, web: 0, manutencao: 0, dados: 0 };
+        selectedOption = null;
+        
+        document.getElementById('questionCard').style.display = 'block';
+        document.getElementById('resultContainer').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'flex';
+        document.getElementById('prevBtn').style.display = 'flex';
+        document.getElementById('submitBtn').style.display = 'none';
+        
         loadQuestion(currentQuestionIndex);
         updateProgress();
     }
-});
 
-document.getElementById('prevBtn').addEventListener('click', function() {
-    if (currentQuestionIndex > 0) {
-        currentQuestionIndex--;
-        loadQuestion(currentQuestionIndex);
-        updateProgress();
-    }
-});
+    // ==================== EVENT LISTENERS ====================
+    document.addEventListener('DOMContentLoaded', carregarPerguntas);
 
-document.getElementById('submitBtn').addEventListener('click', showResults);
-document.getElementById('restartBtn').addEventListener('click', restartQuestionario);
+    document.getElementById('nextBtn').addEventListener('click', function() {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion(currentQuestionIndex);
+            updateProgress(); // Atualiza o progresso ao avançar
+        }
+    });
 
-setTimeout(() => {
-    document.querySelector('.questionario-container').classList.add('loaded');
-}, 100);
-</script>
+    document.getElementById('prevBtn').addEventListener('click', function() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion(currentQuestionIndex);
+            updateProgress(); // Atualiza o progresso ao voltar
+        }
+    });
 
+    document.getElementById('submitBtn').addEventListener('click', showResults);
+    document.getElementById('restartBtn').addEventListener('click', restartQuestionario);
+
+    setTimeout(() => {
+        document.querySelector('.questionario-container').classList.add('loaded');
+    }, 100);
+  </script>
 </body>
 </html>
