@@ -48,10 +48,21 @@
         <input type="date" name="data_nascimento" required>
       </div>
 
-      <div class="input-group">
-        <label>Senha</label>
-        <input type="password" name="senha" placeholder="Digite sua senha" required minlength="6">
-      </div>
+<div class="input-group">
+  <label>Senha</label>
+  <input
+    type="password"
+    name="senha"
+    placeholder="Digite sua senha"
+    required
+    minlength="8"
+    pattern="^(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$"
+    title="A senha deve ter no mínimo 8 caracteres, incluindo pelo menos 1 letra maiúscula e 1 símbolo."
+  >
+  <small>
+    A senha deve conter no mínimo 8 caracteres, incluindo pelo menos 1 letra maiúscula (A–Z) e 1 símbolo.
+  </small>
+</div>
 
       <div class="input-group">
         <label>Confirmar Senha</label>
