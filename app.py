@@ -13,17 +13,34 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import bleach
 
+# ==================== NOVAS IMPORTAÇÕES PARA SESSÃO PERSISTENTE ====================
+from flask_session import Session
+import tempfile
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', secrets.token_hex(32))
 
+# ==================== CONFIGURAÇÃO DE SESSÃO PERSISTENTE ====================
+# Isso faz a sessão ser salva em ARQUIVOS, não na memória
+# Assim, mesmo com servidor reiniciando, a sessão continua!
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = True
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_FILE_DIR'] = os.path.join(tempfile.gettempdir(), 'flask_session')
+app.config['SESSION_FILE_THRESHOLD'] = 100
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # 7 dias em vez de 2 horas
+
+# Inicializar a sessão persistente
+Session(app)
+
 # ==================== CONFIGURAÇÕES DE SEGURANÇA ====================
 app.config.update(
-    SESSION_COOKIE_SECURE=True,  # Apenas HTTPS
-    SESSION_COOKIE_HTTPONLY=True,  # Não acessível via JavaScript
-    SESSION_COOKIE_SAMESITE='Lax',  # Proteção contra CSRF
-    PERMANENT_SESSION_LIFETIME=timedelta(hours=2),  # Sessão expira em 2h
+    SESSION_COOKIE_SECURE=False,  # False em desenvolvimento (HTTP), True em produção (HTTPS)
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7),  # 7 dias
     REMEMBER_COOKIE_DURATION=timedelta(days=30),
-    REMEMBER_COOKIE_SECURE=True,
+    REMEMBER_COOKIE_SECURE=False,  # False em desenvolvimento
     REMEMBER_COOKIE_HTTPONLY=True,
     MAX_CONTENT_LENGTH=16 * 1024 * 1024,  # Limite de 16MB para uploads
 )
@@ -197,14 +214,6 @@ def login_required(f):
                 flash('Por favor, faça login para acessar o sistema.', 'warning')
                 return redirect(url_for('login'))
             
-            # Verificar tempo de sessão (opcional)
-            if 'login_time' in session:
-                login_time = datetime.fromisoformat(session['login_time'])
-                if datetime.now() - login_time > timedelta(hours=2):
-                    session.clear()
-                    flash('Sessão expirada. Faça login novamente.', 'warning')
-                    return redirect(url_for('login'))
-            
             # Verificar CSRF em requisições POST
             if request.method == 'POST':
                 csrf_token = request.form.get('csrf_token')
@@ -310,7 +319,7 @@ def health_check():
 # ==================== ROTAS PÚBLICAS ====================
 
 @app.route("/login", methods=['GET', 'POST'])
-@limiter.limit("5 per minute")  # Máximo 5 tentativas por minuto
+@limiter.limit("5 per minute")
 def login():
     if 'usuario_id' in session:
         return redirect(url_for('index'))
@@ -369,7 +378,6 @@ def login():
                 session['usuario_nome'] = candidato['nome_candidato']
                 session['usuario_email'] = candidato['email_candidato']
                 session['logged_in'] = True
-                session['login_time'] = datetime.now().isoformat()
                 session['csrf_token'] = secrets.token_hex(32)
                 
                 cursor.close()
@@ -413,7 +421,7 @@ def login():
     return render_template("login.html", csrf_token=session.get('csrf_token', ''))
 
 @app.route("/cadastro", methods=['GET', 'POST'])
-@limiter.limit("3 per minute")  # Máximo 3 cadastros por minuto
+@limiter.limit("3 per minute")
 def cadastro():
     if 'usuario_id' in session:
         return redirect(url_for('index'))
@@ -513,7 +521,6 @@ def cadastro():
             session['usuario_nome'] = user_nome
             session['usuario_email'] = user_email
             session['logged_in'] = True
-            session['login_time'] = datetime.now().isoformat()
             session['csrf_token'] = secrets.token_hex(32)
             
             cursor.close()
@@ -570,8 +577,6 @@ def recuperar_senha():
                 
                 conn.commit()
                 
-                # Aqui você enviaria o email com o link de recuperação
-                # link = url_for('resetar_senha', token=token, _external=True)
                 app.logger.info(f"Token de recuperação gerado para: {email}")
                 
                 flash('✅ Se o email existir, você receberá instruções para recuperar sua senha.', 'success')
@@ -1054,5 +1059,6 @@ if __name__ == "__main__":
     app.logger.info(f"🔒 Modo debug: {debug}")
     app.logger.info(f"🔐 CSRF Protection: Ativado")
     app.logger.info(f"⏱️ Rate Limiting: Ativado")
+    app.logger.info(f"💾 Sessão persistente: Ativada (arquivos)")
     
     app.run(host='0.0.0.0', port=port, debug=debug)
